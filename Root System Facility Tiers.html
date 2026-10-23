@@ -1,0 +1,1075 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Root System Facility Tiers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: brand header, view tabs + tier pills, one large viewer card per view, spec strip under the viewer */
+:root{
+  --bg:#f7f5ef; --surface:#ffffff; --surface-2:#efebe0; --fg:#16231c; --fg-dim:#5b6b60;
+  --accent:#1f4d3a; --accent-2:#b8901a; --line:#dcd4c0;
+  --bp-bg:#f6f4ee; --bp-grid:#e7e2d6; --bp-wall:#1d2a24; --bp-line:#3c4a43; --bp-dim:#8a6d1c;
+  --bp-text:#1d2a24; --bp-sub:#5b6b60;
+  --rm-aqua:#d5e7e6; --rm-micro:#dfecd2; --rm-mech:#e6e3dc; --rm-ctrl:#d8e2ee; --rm-pack:#f0e4d2;
+  --rm-office:#e8e2ef; --rm-circ:#f1efe9; --rm-train:#efe7d8; --rm-power:#f2eac8;
+  --eq-line:#45554d; --eq-fill:#ffffff; --water:#8cc0d6; --green:#86b067;
+  --site-grass:#e2ead6; --site-asph:#9a9d9f; --site-conc:#e9e5db; --site-gravel:#d6d0c2;
+  --tree:#a5c48c; --tree-line:#6f8f58; --solar:#5d7394; --pond:#b6d6e4;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1411; --surface:#131c18; --surface-2:#1a2420; --fg:#e9ede8; --fg-dim:#9db0a3;
+    --accent:#58b88a; --accent-2:#e0b93a; --line:#2a3832;
+    --bp-bg:#0f2133; --bp-grid:#18304a; --bp-wall:#e3ecf5; --bp-line:#b8cbe0; --bp-dim:#e0b93a;
+    --bp-text:#e9f0f7; --bp-sub:#9fb4c9;
+    --rm-aqua:#163a4a; --rm-micro:#1b3a2c; --rm-mech:#24303b; --rm-ctrl:#1b2c45; --rm-pack:#382d21;
+    --rm-office:#2b2740; --rm-circ:#132538; --rm-train:#322e1e; --rm-power:#3a3317;
+    --eq-line:#b8cbe0; --eq-fill:#0f2133; --water:#3f86a8; --green:#5f9a4a;
+    --site-grass:#15302c; --site-asph:#334252; --site-conc:#24364a; --site-gravel:#2b3a44;
+    --tree:#24503d; --tree-line:#5f9a7a; --solar:#4f6f9f; --pond:#1d4660;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1411; --surface:#131c18; --surface-2:#1a2420; --fg:#e9ede8; --fg-dim:#9db0a3;
+  --accent:#58b88a; --accent-2:#e0b93a; --line:#2a3832;
+  --bp-bg:#0f2133; --bp-grid:#18304a; --bp-wall:#e3ecf5; --bp-line:#b8cbe0; --bp-dim:#e0b93a;
+  --bp-text:#e9f0f7; --bp-sub:#9fb4c9;
+  --rm-aqua:#163a4a; --rm-micro:#1b3a2c; --rm-mech:#24303b; --rm-ctrl:#1b2c45; --rm-pack:#382d21;
+  --rm-office:#2b2740; --rm-circ:#132538; --rm-train:#322e1e; --rm-power:#3a3317;
+  --eq-line:#b8cbe0; --eq-fill:#0f2133; --water:#3f86a8; --green:#5f9a4a;
+  --site-grass:#15302c; --site-asph:#334252; --site-conc:#24364a; --site-gravel:#2b3a44;
+  --tree:#24503d; --tree-line:#5f9a7a; --solar:#4f6f9f; --pond:#1d4660;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--fg); font-family:'IBM Plex Sans',system-ui,sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif; text-wrap:balance; margin:0}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px; margin:0 auto; padding-block:24px 64px}
+
+header.band{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 28px; padding-bottom:18px; border-bottom:1px solid var(--line)}
+.eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-2)}
+header.band h1{font-size:clamp(26px,4vw,38px); color:var(--accent); margin-top:4px}
+header.band p{color:var(--fg-dim); font-size:14px; max-width:460px; margin:6px 0 0}
+
+.controls{display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center; justify-content:space-between; margin-top:18px}
+nav.tabs{display:flex; gap:2px; flex-wrap:wrap; border-bottom:1px solid var(--line)}
+nav.tabs button{appearance:none; border:none; background:none; color:var(--fg-dim); font:600 14px 'IBM Plex Sans',sans-serif;
+  padding:10px 14px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px}
+nav.tabs button:hover{color:var(--fg)}
+nav.tabs button[aria-selected="true"]{color:var(--accent); border-bottom-color:var(--accent)}
+.tierbar{display:flex; gap:6px; flex-wrap:wrap}
+.tierbtn{appearance:none; cursor:pointer; border:1px solid var(--line); background:var(--surface); color:var(--fg);
+  border-radius:999px; padding:7px 14px; font:600 13px 'IBM Plex Sans',sans-serif; display:flex; align-items:center; gap:8px}
+.tierbtn .dot{width:8px; height:8px; border-radius:50%}
+.tierbtn[aria-pressed="true"]{border-color:var(--accent); background:var(--surface-2); color:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent-2); outline-offset:2px}
+
+.panel{display:none; margin-top:16px}
+.panel.active{display:block}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px; min-width:0}
+.cardhead{display:flex; flex-wrap:wrap; gap:8px 16px; align-items:baseline; justify-content:space-between; margin-bottom:12px}
+.cardhead h3{font-size:21px}
+.cardhead .note{color:var(--fg-dim); font-size:13px}
+
+.toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px}
+.tool{appearance:none; cursor:pointer; border:1px solid var(--line); background:var(--surface); color:var(--fg-dim);
+  border-radius:8px; padding:6px 11px; font:600 12px 'IBM Plex Sans',sans-serif}
+.tool:hover{color:var(--fg)}
+.tool[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--surface)}
+.toolbar .sep{width:1px; background:var(--line); margin:0 4px}
+
+.viewer{position:relative; width:100%; aspect-ratio:16/10; max-height:78vh; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:var(--bp-bg); touch-action:none}
+.viewer svg{width:100%; height:100%; display:block; cursor:grab}
+.viewer svg:active{cursor:grabbing}
+.zoombox{position:absolute; right:calc(10px + env(safe-area-inset-right,0px)); top:10px; display:flex; flex-direction:column; gap:4px}
+.zoombox button{width:32px; height:32px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--fg); font:600 16px 'IBM Plex Sans',sans-serif; cursor:pointer}
+#scene{background:#dfe7ec}
+#scene canvas{display:block; width:100%; height:100%}
+.scene-msg{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#41504a; font:13px 'IBM Plex Mono',monospace}
+.hint{position:absolute; left:10px; bottom:10px; font:11px 'IBM Plex Mono',monospace; color:#24302b; background:rgba(255,255,255,.75); padding:4px 8px; border-radius:6px}
+
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:12px; font-size:12px; color:var(--fg-dim)}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.legend i{width:12px; height:12px; border-radius:3px; display:inline-block; border:1px solid var(--line)}
+.legend i.ln{height:3px; border:none; border-radius:2px; width:16px}
+
+.specgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-top:14px}
+.specgrid .cell{background:var(--surface); padding:12px 14px; min-width:0}
+.specgrid .k{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-dim); margin-bottom:3px}
+.specgrid .v{font-size:16px; font-weight:600}
+
+.tablewrap{overflow-x:auto; margin-top:12px}
+table.data{width:100%; border-collapse:collapse; font-size:13.5px}
+table.data th{text-align:left; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--fg-dim); font-weight:600; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+table.data td{padding:8px 10px; border-bottom:1px solid var(--line)}
+table.data tr:last-child td{border-bottom:none}
+.swatch{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:8px; vertical-align:-1px}
+.flag{background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13px; color:var(--fg-dim); margin-top:16px}
+.flag b{color:var(--fg)}
+.two{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:16px}
+@media (max-width:820px){ .two{grid-template-columns:1fr} .viewer{aspect-ratio:4/5} }
+@media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto} }
+</style>
+
+<div class="wrap">
+  <header class="band">
+    <div>
+      <div class="eyebrow">Rhizova · Root System · Phase 4</div>
+      <h1>Facility Design Explorer</h1>
+      <p>Three building tiers for the Root System, from a church-lot starter facility to a regional flagship. Same platform, every scale.</p>
+    </div>
+  </header>
+
+  <div class="controls">
+    <nav class="tabs" role="tablist" aria-label="Design views">
+      <button role="tab" aria-selected="true" data-panel="model">3D Model</button>
+      <button role="tab" aria-selected="false" data-panel="floor">Floor Plan</button>
+      <button role="tab" aria-selected="false" data-panel="site">Site Plan</button>
+      <button role="tab" aria-selected="false" data-panel="elec">Electrical</button>
+      <button role="tab" aria-selected="false" data-panel="overview">Program &amp; Specs</button>
+    </nav>
+    <div class="tierbar" role="group" aria-label="Facility tier">
+      <button class="tierbtn" data-tier="small" aria-pressed="true"><span class="dot" style="background:#7fa37f"></span>Root Micro</button>
+      <button class="tierbtn" data-tier="medium" aria-pressed="false"><span class="dot" style="background:#c9a227"></span>Root Grove</button>
+      <button class="tierbtn" data-tier="large" aria-pressed="false"><span class="dot" style="background:#3d6a96"></span>Root Nexus</button>
+    </div>
+  </div>
+
+  <section class="panel active" id="panel-model">
+    <div class="card">
+      <div class="cardhead"><h3 id="m-title">Root Micro · 3D Model</h3><span class="note" id="m-sub"></span></div>
+      <div class="toolbar">
+        <button class="tool" data-mode="exterior" aria-pressed="false">Exterior</button>
+        <button class="tool" data-mode="cutaway" aria-pressed="true">Roof off</button>
+        <button class="tool" data-mode="plancut" aria-pressed="false">Plan cut</button>
+        <span class="sep"></span>
+        <button class="tool" data-cam="aerial">Aerial view</button>
+        <button class="tool" data-cam="front">Street view</button>
+        <button class="tool" data-cam="top">Top down</button>
+        <span class="sep"></span>
+        <button class="tool" id="t-labels" aria-pressed="true">Room labels</button>
+      </div>
+      <div class="viewer" id="scene"><div class="scene-msg" id="scene-msg">Loading 3D model…</div><div class="hint">drag to orbit · right-drag to pan · scroll to zoom</div></div>
+      <div class="specgrid" id="m-specs"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-floor">
+    <div class="card">
+      <div class="cardhead"><h3 id="f-title">Root Micro · Floor Plan</h3><span class="note">Sheet A-101 · schematic design</span></div>
+      <div class="toolbar">
+        <button class="tool" data-layer="equip" aria-pressed="true">Equipment</button>
+        <button class="tool" data-layer="dims" aria-pressed="true">Dimensions</button>
+        <button class="tool" data-layer="grid" aria-pressed="true">Column grid</button>
+        <button class="tool" data-layer="power" aria-pressed="false">Power wiring</button>
+      </div>
+      <div class="viewer" id="floor-viewer"></div>
+      <div class="legend" id="f-legend"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-site">
+    <div class="card">
+      <div class="cardhead"><h3 id="s-title">Root Micro · Site Plan</h3><span class="note">Sheet C-101 · schematic site layout</span></div>
+      <div class="viewer" id="site-viewer"></div>
+      <div class="legend" id="s-legend"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-elec">
+    <div class="two">
+      <div class="card">
+        <div class="cardhead"><h3 id="e-title">Single-Line Diagram</h3><span class="note">Sheet E-001</span></div>
+        <div class="viewer" id="sld-viewer" style="aspect-ratio:4/5"></div>
+      </div>
+      <div class="card">
+        <div class="cardhead"><h3>Panel Schedule</h3><span class="note" id="e-service"></span></div>
+        <div class="tablewrap"><table class="data" id="e-table"></table></div>
+        <div class="flag"><b>Life-support priority.</b> Fish aeration and water circulation sit on their own panel. On mid and large tiers that panel is backed by a generator through an automatic transfer switch, so a power outage never stops oxygen to the tanks.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-overview">
+    <div class="card">
+      <div class="cardhead"><h3 id="o-title">Root Micro</h3><span class="note" id="o-sub"></span></div>
+      <div class="specgrid" id="o-specs"></div>
+      <div class="tablewrap"><table class="data" id="o-table"></table></div>
+      <div class="flag"><b>Design status.</b> These are schematic designs for investor and capstone review. Room areas are measured from the drawings; costs and electrical ratings are planning estimates from CEA industry benchmarks. A licensed architect and MEP engineer must develop and stamp construction documents before permitting.</div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* ===== Rhizova Root System — tier data (units: feet; x = east, y = south) ===== */
+const D=(x,y,w,dir,type,s)=>({x,y,w,dir,type:type||'single',s:s||1});
+const Wn=(x,y,w,dir)=>({x,y,w,dir});
+const box=(x,y,w,h,ht,c,label)=>({t:'box',x,y,w,h,ht,c,label});
+const tank=(x,y,r,label,ht)=>({t:'tank',x,y,r,label,ht:ht||4.5});
+const bed=(x,y,w,h,label)=>({t:'bed',x,y,w,h,label});
+const rack=(x,y,w,h,label)=>({t:'rack',x,y,w,h,label});
+const range=(n,f)=>Array.from({length:n},(_,i)=>f(i));
+
+const KIND_LABEL={aqua:'Aquaponics',micro:'Microgreens',mech:'Mechanical',ctrl:'Controls / Data',pack:'Pack & Cold',office:'Office / Lobby',circ:'Circulation',train:'Training',power:'Power / Battery'};
+
+const TIERS={
+/* ------------------------------------------------ SMALL ------------------------------------------------ */
+small:{
+  key:'small', name:'Root Micro', size:'Small', color:'#7fa37f',
+  tag:'Entry tier for church lots, schools, and beginning farmers. One fish system, one greens room, run by one or two people.',
+  W:60, H:50, wallH:14, grid:[0,20,36,60], gridY:[0,20,40,50],
+  cost:'$250K – $400K', staff:'1–2 operators', fish:'1 RAS tank · ~2,000 gal', service:'200 A · 120/240 V · 1-phase',
+  rooms:[
+    {k:'aqua',  n:'Aquaponics Bay',  r:[0,0,36,40]},
+    {k:'micro', n:'Microgreens Room',r:[36,0,60,28]},
+    {k:'pack',  n:'Pack & Cold',     r:[36,28,60,40], tp:[43.5,37.4]},
+    {k:'mech',  n:'Mechanical',      r:[0,40,26,50]},
+    {k:'ctrl',  n:'Control Room',    r:[26,40,40,50]},
+    {k:'office',n:'Entry / Office',  r:[40,40,60,50]},
+  ],
+  walls:[[36,0,36,40],[36,28,60,28],[0,40,60,40],[26,40,26,50],[40,40,40,50]],
+  doors:[
+    D(50,50,6,'h','double',1), D(53,40,3,'h','single',-1), D(48,28,3,'h','single',-1),
+    D(36,14,6,'v','double',-1), D(13,40,4,'h','single',-1), D(33,40,3,'h','single',-1),
+    D(40,45,3,'v','single',-1), D(60,34,8,'v','roll'), D(0,20,10,'v','roll'), D(0,45,3.5,'v','single',-1)
+  ],
+  windows:[Wn(33,50,6,'h'),Wn(56.5,50,3,'h'),Wn(10,0,6,'h'),Wn(26,0,6,'h'),Wn(60,45,4,'v')],
+  equip:[
+    tank(7,9,5,'RAS fish tank'), box(3,16,8,5,5,'filter','Biofilter'), tank(7,27,2.5,'Clarifier',4),
+    box(3,32,8,4,3,'sump','Sump'),
+    bed(15,4,4,32,'DWC grow bed'), bed(21,4,4,32), bed(27,4,4,32),
+    ...range(4,i=>rack(39+i*5,3,2,21,i===0?'LED racks':null)),
+    box(51,29.5,8,9,9,'cooler','Walk-in cooler'), box(38,30,10,3,3,'steel','Wash / pack'),
+    box(2,42,6,4,3,'pump','Pumps'), tank(12,46,1.6,'UV',4), tank(17,46,1.6,null,4), box(19.5,41,5,1.2,6,'elec','Panels'),
+    box(28,44,8,3,2.5,'desk',null), box(37,41,2,3,7,'server',null),
+    box(43,41.5,7,2.5,3.5,'desk',null),
+  ],
+  rtus:[[18,22],[48,16]],
+  roofSolar:{x:4,y:4,w:52,h:30,rows:4},
+  power:{at:[20,41.6], tray:38, panels:[
+    {id:'P-A',n:'Water systems',rate:'60 A',color:'#2d7fa3',serves:['tank','filter','sump','pump']},
+    {id:'P-B',n:'Grow lighting',rate:'40 A',color:'#6c9a3a',serves:['rack','bed']},
+    {id:'P-C',n:'Controls & IoT',rate:'20 A',color:'#7a4fb0',serves:['server','desk']},
+    {id:'P-D',n:'HVAC & cooling',rate:'60 A',color:'#c0702b',serves:['cooler','rtu']},
+  ]},
+  sld:{xfmr:'Utility pole transformer',main:'200 A main breaker',gen:null,solar:'Rooftop · 15 kW',battery:null},
+  site:{
+    bounds:[-40,-32,122,104],
+    pave:[
+      {x:-40,y:90,w:162,h:14,k:'road'},
+      {x:66,y:52,w:45,h:38,k:'asph'},
+      {x:26,y:50,w:40,h:6,k:'conc'}, {x:44,y:56,w:12,h:4,k:'conc'},
+      {x:60,y:26,w:22,h:20,k:'gravel'}, {x:70,y:44,w:12,h:8,k:'gravel'},
+      {x:-16,y:12,w:16,h:16,k:'conc'},
+      {x:-8,y:40,w:8,h:10,k:'conc'},
+    ],
+    parking:[{x:66,y:52,n:5,dir:'down',ada:1}],
+    gardens:range(8,i=>[-32+(i%4)*7,58+Math.floor(i/4)*14,4,10]),
+    cisterns:[[8,-9,4,10],[20,-9,4,10]],
+    pads:[box(84,30,8,8,5,'dumpster','Dumpster'), box(62,46,4,3.5,4,'xfmr','Xfmr'), box(56,82,10,2,5,'sign','Sign')],
+    trees:[...range(10,i=>[-30+i*14,-24,5]), ...range(4,i=>[-34,-8+i*14,5]), [117,60,4],[117,76,4],[0,72,4],[90,-6,5]],
+    labels:[[-18,52,'Community garden'],[88,46,'Parking (5)'],[14,-17,'Rain cisterns'],[71,23,'Service apron']],
+  }
+},
+/* ------------------------------------------------ MEDIUM ------------------------------------------------ */
+medium:{
+  key:'medium', name:'Root Grove', size:'Medium', color:'#c9a227',
+  tag:'Commercial demonstration scale and the leading Root 1 candidate. Eight fish tanks, a full microgreens wing, a loading dock, and a training room.',
+  W:160, H:125, wallH:22, grid:[0,30,60,90,125,160], gridY:[0,30,60,90,125],
+  cost:'$2.5M – $4.5M', staff:'6–10 operators', fish:'8 RAS tanks · ~25,000 gal', service:'800 A · 277/480 V · 3-phase',
+  rooms:[
+    {k:'aqua',  n:'Aquaponics Hall',          r:[0,0,90,90]},
+    {k:'micro', n:'Microgreens Wing',         r:[90,0,160,60]},
+    {k:'pack',  n:'Pack, Cold & Dock',        r:[90,60,160,90], tp:[127,82]},
+    {k:'circ',  n:'Corridor',                 r:[0,90,160,98]},
+    {k:'mech',  n:'Mechanical & Water',       r:[0,98,45,125]},
+    {k:'ctrl',  n:'Root Intelligence Center', r:[45,98,85,125]},
+    {k:'train', n:'Training Room',            r:[85,98,125,125]},
+    {k:'office',n:'Lobby & Offices',          r:[125,98,160,125]},
+  ],
+  walls:[[90,0,90,90],[90,60,160,60],[0,90,160,90],[0,98,160,98],[45,98,45,125],[85,98,85,125],[125,98,125,125]],
+  doors:[
+    D(142,125,6,'h','double',1), D(142,98,3.5,'h','single',-1), D(105,98,6,'h','double',1),
+    D(65,98,3.5,'h','single',1), D(22,98,6,'h','double',1), D(45,90,8,'h','double',-1),
+    D(125,90,6,'h','double',-1), D(90,30,6,'v','double',1), D(125,60,6,'h','double',-1),
+    D(160,68,10,'v','roll'), D(160,82,10,'v','roll'), D(0,45,12,'v','roll'),
+    D(0,112,6,'v','double',-1), D(0,94,4,'v','single',-1), D(160,94,4,'v','single',1)
+  ],
+  windows:[
+    ...[95,105,115].map(x=>Wn(x,125,6,'h')), Wn(132,125,5,'h'), Wn(153,125,6,'h'),
+    ...[55,65,75].map(x=>Wn(x,125,6,'h')), ...[15,35,55,75].map(x=>Wn(x,0,8,'h')),
+    Wn(160,106,6,'v'), Wn(160,118,6,'v')
+  ],
+  equip:[
+    ...[10,26].flatMap(x=>[12,30,48,66].map((y,i)=>tank(x,y,6.5,(x===10&&i===0)?'RAS fish tanks':null,5))),
+    ...[8,26,44,62].map((y,i)=>box(36,y,8,12,7,'filter',i===0?'Biofilters':null)),
+    box(4,78,26,8,3,'sump','Sump & degassing'),
+    ...[50,58,66,74,82].map((x,i)=>bed(x,8,6,74,i===0?'DWC grow beds':null)),
+    ...range(10,i=>rack(95+i*6,6,3,22,i===0?'LED racks':null)), ...range(10,i=>rack(95+i*6,32,3,22)),
+    box(92,62,16,12,12,'cooler','Walk-in cooler'), box(92,76,16,12,12,'cooler','Cooler 2'),
+    box(112,66,24,4,3.2,'steel','Wash / pack line'), box(146,63,9,24,0.6,'pallet','Dock staging'),
+    box(2,100,12,3,7,'elec','Switchgear'), box(18,103,9,5,3,'pump','Pump skid'), box(4,112,9,7,6,'pump','Heat exchanger'),
+    box(18,115,8,5,4,'filter','UV & filtration'), tank(34,107,3.5,'Treated water',8), tank(38,118,3,null,8),
+    box(52,99.2,26,1,8,'screen','Live data wall'), ...[[50,108],[66,108],[50,116],[66,116]].map(([x,y])=>box(x,y,13,3,2.5,'desk',null)),
+    box(80.5,101,3,4,7,'server','Servers'), box(80.5,106,3,4,7,'server',null),
+    box(95,99.2,20,1,7,'screen','Projection'), ...[90,102,114].flatMap(x=>[105,112,119].map(y=>box(x,y,9,3,2.5,'table',null))),
+    box(136,113,11,3,3.5,'desk','Reception'), box(128,100,7,3,2.5,'desk',null), box(151,100,7,3,2.5,'desk',null),
+  ],
+  rtus:[[30,30],[30,62],[64,40],[118,20],[140,40],[120,74],[66,110]],
+  roofSolar:{x:6,y:6,w:148,h:78,rows:7},
+  power:{at:[3,101.6], tray:94, panels:[
+    {id:'P-A',n:'Water systems (life support)',rate:'200 A',color:'#2d7fa3',serves:['tank','filter','sump','pump']},
+    {id:'P-B',n:'Grow lighting',rate:'150 A',color:'#6c9a3a',serves:['rack','bed']},
+    {id:'P-C',n:'Controls, IoT & servers',rate:'60 A',color:'#7a4fb0',serves:['server','screen']},
+    {id:'P-D',n:'HVAC',rate:'200 A',color:'#c0702b',serves:['rtu']},
+    {id:'P-E',n:'Cold storage & dock',rate:'80 A',color:'#b23b4a',serves:['cooler','steel']},
+  ]},
+  sld:{xfmr:'Pad-mount transformer · 500 kVA',main:'800 A main switchgear',gen:'Generator · 150 kW',solar:'Rooftop · 120 kW',battery:null,ats:'P-A'},
+  site:{
+    bounds:[-74,-84,262,232],
+    pave:[
+      {x:-74,y:210,w:336,h:18,k:'road'},
+      {x:50,y:140,w:176,h:62,k:'asph'}, {x:126,y:202,w:28,h:8,k:'asph'},
+      {x:160,y:46,w:92,h:66,k:'asph'}, {x:232,y:112,w:20,h:98,k:'asph'},
+      {x:30,y:125,w:140,h:15,k:'conc'},
+      {x:-26,y:32,w:26,h:26,k:'conc'}, {x:-28,y:96,w:28,h:30,k:'conc'},
+    ],
+    parking:[{x:54,y:140,n:18,dir:'down',ada:2},{x:54,y:184,n:18,dir:'up'}],
+    pond:{x:-44,y:160,rx:22,ry:32},
+    solar:{x:0,y:-72,w:160,rows:5,depth:7,pitch:12},
+    fence:[[-8,-78],[168,-78],[168,-12],[-8,-12],[-8,-78]],
+    cisterns:[[-14,8,6,14],[-14,21,6,14],[-14,70,6,14],[-14,83,6,14]],
+    pads:[box(-24,100,14,10,8,'gen','Generator'), box(-24,114,8,8,6,'xfmr','Transformer'),
+          box(200,98,10,10,5,'dumpster','Dumpster'), box(136,125,12,10,0.6,'canopy','Entry canopy'), box(30,198,14,2,6,'sign','Sign')],
+    trucks:[{y:68},{y:82}],
+    trees:[...[-66,-46,-26,186,206,226,246].map(x=>[x,-78,6]), ...range(6,i=>[-66,-50+i*20,6]), [44,150,5],[44,192,5],
+           ...range(5,i=>[-20+i*14,204,4.5]), [180,130,5],[200,130,5],[220,130,5]],
+    labels:[[80,-78,'Ground-mount solar array'],[206,40,'Truck court · 2 docks'],[-44,200,'Stormwater pond'],[138,176,'Parking (36)'],[-14,-2,'Rain cisterns'],[100,135,'Entry plaza']],
+  }
+},
+/* ------------------------------------------------ LARGE ------------------------------------------------ */
+large:{
+  key:'large', name:'Root Nexus', size:'Large', color:'#3d6a96',
+  tag:'Regional flagship and investor showcase. Sixteen fish tanks, a specialty crop wing, four truck docks, an R&D data center, and a 500 kW solar microgrid.',
+  W:300, H:200, wallH:28, grid:[0,50,100,150,195,240,300], gridY:[0,50,100,150,200],
+  cost:'$10M – $18M', staff:'20–35 operators', fish:'16 RAS tanks · ~90,000 gal', service:'2,000 A · 277/480 V · 3-phase',
+  rooms:[
+    {k:'aqua',  n:'Aquaponics Production Hall',     r:[0,0,150,150]},
+    {k:'micro', n:'Microgreens & Specialty Wing',   r:[150,0,240,130]},
+    {k:'pack',  n:'Cold Storage & Distribution',    r:[240,0,300,110]},
+    {k:'mech',  n:'Mechanical Plant',               r:[150,130,240,150]},
+    {k:'power', n:'Inverter & Battery Room',        r:[240,110,300,150]},
+    {k:'circ',  n:'Main Corridor',                  r:[0,150,300,160]},
+    {k:'ctrl',  n:'R&D Lab',                        r:[0,160,50,200]},
+    {k:'ctrl',  n:'Data Center',                    r:[50,160,80,200]},
+    {k:'train', n:'Classroom A',                    r:[80,160,135,200]},
+    {k:'train', n:'Classroom B',                    r:[135,160,190,200]},
+    {k:'office',n:'Investor Lobby',                 r:[190,160,260,200]},
+    {k:'office',n:'Boardroom',                      r:[260,160,300,180]},
+    {k:'office',n:'Offices',                        r:[260,180,300,200]},
+  ],
+  walls:[[150,0,150,150],[240,0,240,150],[150,130,240,130],[240,110,300,110],[0,150,300,150],[0,160,300,160],
+         [50,160,50,200],[80,160,80,200],[135,160,135,200],[190,160,190,200],[260,160,260,200],[260,180,300,180]],
+  doors:[
+    D(225,200,8,'h','double',1), D(225,160,8,'h','double',-1), D(260,170,4,'v','single',1), D(260,190,4,'v','single',1),
+    D(108,160,6,'h','double',1), D(162,160,6,'h','double',1), D(25,160,4,'h','single',1), D(65,160,4,'h','single',1),
+    D(75,150,10,'h','double',-1), D(195,150,6,'h','double',-1), D(270,150,4,'h','single',-1),
+    D(150,65,8,'v','double',1), D(195,130,6,'h','double',1), D(240,60,8,'v','double',1),
+    ...[15,33,51,69].map(y=>D(300,y,10,'v','roll')), D(75,0,14,'h','roll'), D(195,0,10,'h','roll'),
+    D(0,155,5,'v','single',-1), D(300,155,5,'v','single',1), D(300,130,6,'v','double',1)
+  ],
+  windows:[
+    Wn(12,200,8,'h'),Wn(36,200,8,'h'), ...[92,108,124,147,163,179].map(x=>Wn(x,200,8,'h')),
+    Wn(200,200,14,'h'), Wn(245,200,18,'h'), Wn(270,200,8,'h'), Wn(290,200,8,'h'),
+    Wn(300,170,10,'v'), Wn(300,190,10,'v'), Wn(0,180,10,'v'),
+    ...[20,45,110,130].map(x=>Wn(x,0,12,'h')), Wn(170,0,10,'h'), Wn(222,0,10,'h')
+  ],
+  equip:[
+    ...[14,34].flatMap(x=>range(8,i=>tank(x,14+i*18,7.5,(x===14&&i===0)?'RAS fish tanks':null,5.5))),
+    ...[10,44,78,112].map((y,i)=>box(48,y,12,28,8,'filter',i===0?'Biofiltration plant':null)),
+    ...range(8,i=>bed(68+i*10,10,7,130,i===0?'DWC grow beds':null)),
+    ...range(13,i=>rack(156+i*6.5,8,3,50,i===0?'Automated LED racks':null)), ...range(13,i=>rack(156+i*6.5,68,3,50)),
+    box(242,4,26,30,14,'cooler','Cooler 1'), box(242,38,26,30,14,'cooler','Cooler 2'), box(242,72,26,30,14,'cooler','Freezer'),
+    box(282,4,14,80,0.6,'pallet','Dock staging'), box(272,90,24,5,3.2,'steel','Pack line'),
+    box(154,134,16,12,4,'pump','Pump skid A'), box(174,134,16,12,4,'pump','Pump skid B'), box(196,134,18,12,9,'pump','Chiller'),
+    tank(229,140,6,'Treated water',12),
+    ...[114,121,128].map((y,i)=>box(244,y,52,4,7,'battery',i===0?'Battery storage 1 MWh':null)),
+    box(244,140,30,4,8,'elec','Switchgear'), box(278,140,18,4,7,'elec','Inverters'),
+    ...[168,178,188].map((y,i)=>box(6,y,36,3,3,'steel',i===0?'Lab benches':null)),
+    ...[166,174,182,190].map((y,i)=>box(54,y,22,3,7,'server',i===0?'Server racks':null)),
+    box(90,161.2,30,1,7,'screen','Projection'), box(145,161.2,30,1,7,'screen','Projection'),
+    ...[86,100,114].flatMap(x=>[170,178,186].map(y=>box(x,y,10,3,2.5,'table',null))),
+    ...[141,155,169].flatMap(x=>[170,178,186].map(y=>box(x,y,10,3,2.5,'table',null))),
+    box(196,161.2,40,1,9,'screen','Live data wall'), box(214,182,20,4,3.5,'desk','Reception'),
+    box(240,172,12,12,4,'exhibit','Root System exhibit'), box(196,184,12,8,2.5,'table','Lounge'),
+    box(268,166,24,8,2.5,'table','Board table'),
+    box(264,184,8,3,2.5,'desk',null), box(276,184,8,3,2.5,'desk',null), box(288,184,8,3,2.5,'desk',null),
+  ],
+  rtus:[[40,40],[40,110],[100,40],[100,110],[180,40],[210,90],[270,40],[270,80],[40,180],[160,180]],
+  roofSolar:{x:8,y:8,w:284,h:134,rows:11},
+  power:{at:[246,141.6], tray:155, panels:[
+    {id:'P-A',n:'Water systems (life support)',rate:'500 A',color:'#2d7fa3',serves:['tank','filter','pump']},
+    {id:'P-B',n:'Grow lighting',rate:'400 A',color:'#6c9a3a',serves:['rack','bed']},
+    {id:'P-C',n:'R&D & data center',rate:'100 A',color:'#7a4fb0',serves:['server','screen']},
+    {id:'P-D',n:'HVAC',rate:'500 A',color:'#c0702b',serves:['rtu']},
+    {id:'P-E',n:'Cold storage & dock',rate:'200 A',color:'#b23b4a',serves:['cooler','steel']},
+    {id:'P-F',n:'Admin & training',rate:'100 A',color:'#8a7a2a',serves:['desk','table','exhibit']},
+  ]},
+  sld:{xfmr:'Pad-mount transformer · 1,500 kVA',main:'2,000 A main switchgear',gen:'Generator · 750 kW',solar:'Ground + roof · 500 kW',battery:'Battery storage · 1 MWh',ats:'P-A, P-C'},
+  site:{
+    bounds:[-112,-142,432,344],
+    pave:[
+      {x:-112,y:318,w:544,h:20,k:'road'},
+      {x:30,y:218,w:260,h:70,k:'asph'}, {x:140,y:288,w:26,h:30,k:'asph'},
+      {x:300,y:-6,w:104,h:128,k:'asph'}, {x:402,y:-6,w:22,h:324,k:'asph'},
+      {x:180,y:200,w:120,h:18,k:'conc'}, {x:0,y:200,w:180,h:8,k:'conc'},
+      {x:60,y:-22,w:30,h:22,k:'conc'}, {x:184,y:-18,w:22,h:18,k:'conc'},
+      {x:300,y:122,w:36,h:40,k:'conc'},
+    ],
+    parking:[{x:34,y:218,n:28,dir:'down',ada:3},{x:34,y:264,n:28,dir:'up'}],
+    pond:{x:-62,y:120,rx:34,ry:58},
+    solar:{x:-100,y:-132,w:400,rows:8,depth:7,pitch:13},
+    fence:[[-106,-138],[306,-138],[306,-26],[-106,-26],[-106,-138]],
+    cisterns:[[-16,14,7,16],[-16,32,7,16],[-16,50,7,16],[-16,190,7,16],[-30,190,7,16]],
+    pads:[box(312,128,18,14,9,'gen','Generator'), box(312,146,12,10,7,'xfmr','Transformer'),
+          box(380,124,12,12,5,'dumpster','Dumpster'), box(214,200,22,14,0.6,'canopy','Entry canopy'), box(-50,306,18,2,7,'sign','Sign')],
+    trucks:[{y:15},{y:33},{y:51},{y:69}],
+    trees:[...range(16,i=>[-104,-10+i*20,7]).filter(t=>t[1]<60||t[1]>186), ...range(10,i=>[-100+i*22,308,6]), ...range(6,i=>[176+i*20,308,6]),
+           [24,228,5],[24,278,5],[296,228,5],[296,278,5],[60,212,5],[120,212,5],[150,212,5]],
+    labels:[[100,-136,'Solar field · 500 kW'],[352,-12,'Truck court · 4 docks'],[-62,120,'Stormwater reservoir'],[160,254,'Parking (56)'],[-28,6,'Rain cisterns'],[240,214,'Entry plaza'],[328,170,'Generator & transformer']],
+  }
+}
+};
+
+/* derived numbers */
+for(const t of Object.values(TIERS)){
+  t.area=t.W*t.H;
+  t.rooms.forEach(r=>{r.area=(r.r[2]-r.r[0])*(r.r[3]-r.r[1]);});
+  t.stalls=(t.site.parking||[]).reduce((s,p)=>s+p.n,0);
+  const b=t.site.bounds; t.siteAcres=((b[2]-b[0])*(b[3]-b[1])/43560);
+}
+
+/* ===== 2D drawings: floor plan, site plan, single-line diagram ===== */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const ftin=n=>{const f=Math.floor(n+1e-6),i=Math.round((n-f)*12);return `${f}'-${i}"`;};
+const r2=n=>Math.round(n*100)/100;
+
+(function(){const s=document.createElement('style');s.textContent=`
+svg.rz *{vector-effect:non-scaling-stroke}
+svg.rz text{font-family:'IBM Plex Sans',system-ui,sans-serif}
+svg.rz .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.bp-paper{fill:var(--bp-bg)} .bp-gl{stroke:var(--bp-grid);stroke-width:1px;fill:none}
+.rm-aqua{fill:var(--rm-aqua)} .rm-micro{fill:var(--rm-micro)} .rm-mech{fill:var(--rm-mech)} .rm-ctrl{fill:var(--rm-ctrl)}
+.rm-pack{fill:var(--rm-pack)} .rm-office{fill:var(--rm-office)} .rm-circ{fill:var(--rm-circ)} .rm-train{fill:var(--rm-train)} .rm-power{fill:var(--rm-power)}
+.bp-wall{fill:var(--bp-wall)} .bp-ln{stroke:var(--bp-line);fill:none;stroke-width:1px}
+.bp-eq{fill:var(--eq-fill);stroke:var(--eq-line);stroke-width:1px} .bp-eqln{stroke:var(--eq-line);stroke-width:.7px;fill:none}
+.bp-dark{fill:var(--eq-line)} .bp-water{fill:var(--water);stroke:var(--eq-line);stroke-width:1px} .bp-green{fill:var(--green);stroke:var(--eq-line);stroke-width:1px}
+.bp-txt{fill:var(--bp-text)} .bp-sub{fill:var(--bp-sub)} .bp-dim{stroke:var(--bp-dim);fill:none;stroke-width:1px} .bp-dimt{fill:var(--bp-dim)}
+.halo{paint-order:stroke;stroke:var(--bp-bg);stroke-width:3px;stroke-linejoin:round}
+.pill{fill:var(--bp-bg);fill-opacity:.9;stroke:var(--bp-line);stroke-width:.6px}
+.st-grass{fill:var(--site-grass)} .st-asph,.st-road{fill:var(--site-asph)} .st-conc{fill:var(--site-conc);stroke:var(--bp-line);stroke-width:.5px} .st-gravel{fill:var(--site-gravel)}
+.st-tree{fill:var(--tree);fill-opacity:.85;stroke:var(--tree-line);stroke-width:1px} .st-solar{fill:var(--solar)} .st-pond{fill:var(--pond);stroke:var(--bp-line);stroke-width:.7px}
+.st-stripe{stroke:#f4f2ea;stroke-width:1.2px} .st-ada{fill:#5b8fd0;fill-opacity:.45}
+`;document.head.appendChild(s);})();
+
+/* ---- walls split around door & window openings (shared with 3D) ---- */
+function wallModel(t){
+  const ops=[...t.doors.map(d=>({...d,kind:'door'})),...t.windows.map(o=>({...o,kind:'win'}))];
+  const ext=[[0,0,t.W,0],[t.W,0,t.W,t.H],[0,t.H,t.W,t.H],[0,0,0,t.H]].map(w=>({w,ext:true}));
+  const ints=t.walls.map(w=>({w,ext:false}));
+  return [...ext,...ints].map(({w,ext})=>{
+    const [x1,y1,x2,y2]=w, horiz=Math.abs(y1-y2)<1e-6;
+    const a=horiz?Math.min(x1,x2):Math.min(y1,y2), b=horiz?Math.max(x1,x2):Math.max(y1,y2), c=horiz?y1:x1;
+    const on=ops.filter(o=>horiz?(o.dir==='h'&&Math.abs(o.y-c)<1e-6&&o.x>a&&o.x<b):(o.dir==='v'&&Math.abs(o.x-c)<1e-6&&o.y>a&&o.y<b))
+      .map(o=>{const m=horiz?o.x:o.y;return {o,s:m-o.w/2,e:m+o.w/2};}).sort((p,q)=>p.s-q.s);
+    const solids=[];let cur=a;
+    for(const p of on){if(p.s>cur)solids.push([cur,p.s]);cur=Math.max(cur,p.e);}
+    if(cur<b)solids.push([cur,b]);
+    const th=ext?1:0.5;
+    return {horiz,c,a,b,ext,th,solids,openings:on};
+  });
+}
+
+/* ---- pan & zoom for any SVG viewer ---- */
+function panZoom(holder,svg,vb){
+  let v={...vb};
+  const apply=()=>svg.setAttribute('viewBox',`${v.x} ${v.y} ${v.w} ${v.h}`);
+  const scale=()=>{const r=svg.getBoundingClientRect();return Math.max(v.w/r.width,v.h/r.height)||1;};
+  const toSvg=(cx,cy)=>{const r=svg.getBoundingClientRect(),s=scale();const ox=(r.width*s-v.w)/2,oy=(r.height*s-v.h)/2;
+    return [v.x-ox+(cx-r.left)*s, v.y-oy+(cy-r.top)*s];};
+  const zoomAt=(f,px,py)=>{const nw=v.w*f;if(nw<vb.w/14||nw>vb.w*1.6)return;v.x=px-(px-v.x)*f;v.y=py-(py-v.y)*f;v.w=nw;v.h*=f;apply();};
+  const zoomC=f=>zoomAt(f,v.x+v.w/2,v.y+v.h/2);
+  svg.addEventListener('wheel',e=>{e.preventDefault();const [px,py]=toSvg(e.clientX,e.clientY);zoomAt(e.deltaY>0?1.15:1/1.15,px,py);},{passive:false});
+  let drag=null;
+  svg.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};svg.setPointerCapture(e.pointerId);});
+  svg.addEventListener('pointermove',e=>{if(!drag)return;const s=scale();v.x-=(e.clientX-drag.x)*s;v.y-=(e.clientY-drag.y)*s;drag={x:e.clientX,y:e.clientY};apply();});
+  const end=()=>{drag=null;};svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+  const zb=document.createElement('div');zb.className='zoombox';
+  [['+','Zoom in',()=>zoomC(1/1.3)],['−','Zoom out',()=>zoomC(1.3)],['⤢','Fit to view',()=>{v={...vb};apply();}]].forEach(([t,l,f])=>{
+    const b=document.createElement('button');b.textContent=t;b.title=l;b.setAttribute('aria-label',l);b.onclick=f;zb.appendChild(b);});
+  holder.appendChild(zb);apply();
+}
+function mountSVG(holder,inner,vb){
+  holder.innerHTML=`<svg class="rz" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${inner}</svg>`;
+  panZoom(holder,holder.querySelector('svg'),vb);
+}
+function txt(x,y,s,fs,cls,anchor,extra){return `<text x="${r2(x)}" y="${r2(y)}" font-size="${r2(fs)}" class="${cls||'bp-txt'}" text-anchor="${anchor||'middle'}" ${extra||''}>${esc(s)}</text>`;}
+function tag(x,y,lines,fs){ // pill with 1–2 lines
+  const w=Math.max(...lines.map((l,i)=>l.length*(i?0.58:0.62)*fs*(i?0.82:1)))+fs*1.2, h=fs*(lines.length>1?2.5:1.5);
+  let s=`<rect class="pill" x="${r2(x-w/2)}" y="${r2(y-h/2)}" width="${r2(w)}" height="${r2(h)}" rx="${r2(fs*.35)}"/>`;
+  if(lines.length>1){s+=txt(x,y-fs*0.12,lines[0],fs,'bp-txt','middle','font-weight="700" letter-spacing=".04em"');s+=txt(x,y+fs*0.95,lines[1],fs*0.82,'bp-sub mono');}
+  else s+=txt(x,y+fs*0.35,lines[0],fs,'bp-txt','middle','font-weight="600"');
+  return s;
+}
+
+/* ---- equipment symbols ---- */
+function equipSVG(e,fu){
+  let s='';const lab=(x,y)=>e.label?txt(x,y,e.label,fu*0.55,'bp-sub halo','middle','font-weight="600"'):'';
+  if(e.t==='tank'){
+    s+=`<circle cx="${e.x}" cy="${e.y}" r="${e.r}" class="bp-water"/><circle cx="${e.x}" cy="${e.y}" r="${r2(e.r*0.82)}" class="bp-eqln"/>`;
+    s+=lab(e.x,e.y+e.r+fu*0.75);
+  }else if(e.t==='bed'){
+    s+=`<rect x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" class="bp-green" fill-opacity=".55"/>`;
+    const n=Math.floor(e.h/4);for(let i=1;i<n;i++)s+=`<line x1="${e.x}" x2="${e.x+e.w}" y1="${r2(e.y+i*e.h/n)}" y2="${r2(e.y+i*e.h/n)}" class="bp-eqln"/>`;
+    s+=lab(e.x+e.w/2,e.y-fu*0.4);
+  }else if(e.t==='rack'){
+    s+=`<rect x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" class="bp-eq"/>`;
+    const n=Math.floor(e.h/4);for(let i=1;i<n;i++)s+=`<line x1="${e.x}" x2="${e.x+e.w}" y1="${r2(e.y+i*e.h/n)}" y2="${r2(e.y+i*e.h/n)}" class="bp-eqln"/>`;
+    s+=`<line x1="${e.x}" y1="${e.y}" x2="${e.x+e.w}" y2="${e.y+e.h}" class="bp-eqln"/>`;
+    s+=lab(e.x+e.w*2,e.y-fu*0.4);
+  }else{
+    const c=e.c;
+    if(c==='screen') s+=`<rect x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" class="bp-dark"/>`;
+    else if(c==='server') s+=`<rect x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" class="bp-dark" fill-opacity=".8"/>`;
+    else if(c==='pallet') s+=`<rect x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" class="bp-ln" stroke-dasharray="4 3"/>`;
+    else{
+      s+=`<rect x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" class="bp-eq"/>`;
+      if(c==='cooler'){const i=Math.min(e.w,e.h)*0.08;s+=`<rect x="${r2(e.x+i)}" y="${r2(e.y+i)}" width="${r2(e.w-2*i)}" height="${r2(e.h-2*i)}" class="bp-eqln"/>`;}
+      if(c==='filter'||c==='battery'){for(let k=1;k<4;k++){const yy=e.h>e.w;s+=yy?`<line x1="${e.x}" x2="${e.x+e.w}" y1="${r2(e.y+k*e.h/4)}" y2="${r2(e.y+k*e.h/4)}" class="bp-eqln"/>`:`<line y1="${e.y}" y2="${e.y+e.h}" x1="${r2(e.x+k*e.w/4)}" x2="${r2(e.x+k*e.w/4)}" class="bp-eqln"/>`;}}
+      if(c==='pump'){s+=`<circle cx="${r2(e.x+e.w*0.3)}" cy="${r2(e.y+e.h/2)}" r="${r2(Math.min(e.w,e.h)*0.25)}" class="bp-eqln"/><circle cx="${r2(e.x+e.w*0.7)}" cy="${r2(e.y+e.h/2)}" r="${r2(Math.min(e.w,e.h)*0.25)}" class="bp-eqln"/>`;}
+      if(c==='elec'){s+=`<line x1="${e.x}" y1="${e.y}" x2="${e.x+e.w}" y2="${e.y+e.h}" class="bp-eqln"/>`;}
+    }
+    s+=lab(e.x+e.w/2,e.h>e.w*2?e.y-fu*0.4:e.y+e.h+fu*0.75);
+  }
+  return s;
+}
+
+/* ---- doors & windows ---- */
+function openingSVG(wm,p){
+  const o=p.o,th=wm.th,c=wm.c,sg=o.s||1;let s='';
+  if(o.kind==='win'){
+    if(wm.horiz){s+=`<rect x="${r2(p.s)}" y="${r2(c-th/2)}" width="${r2(p.e-p.s)}" height="${th}" class="bp-paper"/>`;
+      [-th/2,0,th/2].forEach(d=>s+=`<line x1="${r2(p.s)}" x2="${r2(p.e)}" y1="${r2(c+d)}" y2="${r2(c+d)}" class="bp-ln"/>`);}
+    else{s+=`<rect y="${r2(p.s)}" x="${r2(c-th/2)}" height="${r2(p.e-p.s)}" width="${th}" class="bp-paper"/>`;
+      [-th/2,0,th/2].forEach(d=>s+=`<line y1="${r2(p.s)}" y2="${r2(p.e)}" x1="${r2(c+d)}" x2="${r2(c+d)}" class="bp-ln"/>`);}
+    return s;
+  }
+  if(o.type==='roll'){
+    const d=th*0.9;
+    if(wm.horiz)[-d,d].forEach(k=>s+=`<line x1="${r2(p.s)}" x2="${r2(p.e)}" y1="${r2(c+k)}" y2="${r2(c+k)}" class="bp-ln" stroke-dasharray="5 3"/>`);
+    else [-d,d].forEach(k=>s+=`<line y1="${r2(p.s)}" y2="${r2(p.e)}" x1="${r2(c+k)}" x2="${r2(c+k)}" class="bp-ln" stroke-dasharray="5 3"/>`);
+    return s;
+  }
+  const leaf=(hx,hy,lx,ly,ax,ay,r,sw)=>`<line x1="${r2(hx)}" y1="${r2(hy)}" x2="${r2(lx)}" y2="${r2(ly)}" class="bp-ln" style="stroke-width:1.6px"/><path d="M${r2(ax)} ${r2(ay)} A${r2(r)} ${r2(r)} 0 0 ${sw} ${r2(lx)} ${r2(ly)}" class="bp-ln" stroke-dasharray="3 2"/>`;
+  const w=p.e-p.s,m=(p.s+p.e)/2;
+  if(wm.horiz){
+    if(o.type==='single') s+=leaf(p.s,c,p.s,c+sg*w,p.e,c,w,sg>0?1:0);
+    else{s+=leaf(p.s,c,p.s,c+sg*w/2,m,c,w/2,sg>0?1:0);s+=leaf(p.e,c,p.e,c+sg*w/2,m,c,w/2,sg>0?0:1);}
+  }else{
+    if(o.type==='single') s+=leaf(c,p.s,c+sg*w,p.s,c,p.e,w,sg>0?0:1);
+    else{s+=leaf(c,p.s,c+sg*w/2,p.s,c,m,w/2,sg>0?0:1);s+=leaf(c,p.e,c+sg*w/2,p.e,c,m,w/2,sg>0?1:0);}
+  }
+  return s;
+}
+
+/* ---- power routing (shared by plan + legend) ---- */
+function powerRuns(t){
+  const fu=Math.max(t.W,t.H)/55, P=t.power, n=P.panels.length;
+  return P.panels.map((p,i)=>{
+    const px=P.at[0]+i*fu*1.25, py=P.at[1], ty=P.tray+(i-(n-1)/2)*fu*0.45;
+    const loads=[];
+    t.equip.forEach(e=>{if(p.serves.includes(e.t)||p.serves.includes(e.c)){
+      const cx=e.t==='tank'?e.x:e.x+e.w/2, cy=e.t==='tank'?e.y:e.y+e.h/2; loads.push([cx,cy]);}});
+    if(p.serves.includes('rtu'))t.rtus.forEach(r=>loads.push(r));
+    return {...p,px,py,ty,loads};
+  });
+}
+
+/* ================= FLOOR PLAN ================= */
+function floorPlanSVG(t,layers){
+  const W=t.W,H=t.H,fu=Math.max(W,H)/55,m=Math.max(W,H)*0.2;
+  let s=`<defs><pattern id="g5-${t.key}" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M5 0H0V5" class="bp-gl" style="stroke-width:.5px"/></pattern></defs>`;
+  s+=`<rect x="${-m*3}" y="${-m*3}" width="${W+m*6}" height="${H+m*6}" class="bp-paper"/>`;
+  s+=`<rect x="${-m}" y="${-m}" width="${W+2*m}" height="${H+2*m}" fill="url(#g5-${t.key})" opacity=".55"/>`;
+  // rooms
+  t.rooms.forEach(r=>{const [x0,y0,x1,y1]=r.r;s+=`<rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" class="rm-${r.k}"/>`;});
+  // column grid
+  if(layers.grid){
+    const L='ABCDEFGHJK';
+    t.grid.forEach((x,i)=>{s+=`<line x1="${x}" x2="${x}" y1="${r2(-m*0.72)}" y2="${r2(H+m*0.1)}" class="bp-gl" stroke-dasharray="8 4 2 4" style="stroke:var(--bp-sub);stroke-opacity:.45"/>`;
+      s+=`<circle cx="${x}" cy="${r2(-m*0.82)}" r="${r2(fu*0.95)}" class="bp-paper" style="stroke:var(--bp-line);stroke-width:1px"/>`+txt(x,-m*0.82+fu*0.38,L[i],fu*1.05,'bp-txt','middle','font-weight="700"');});
+    t.gridY.forEach((y,i)=>{s+=`<line y1="${y}" y2="${y}" x1="${r2(-m*0.72)}" x2="${r2(W+m*0.1)}" class="bp-gl" stroke-dasharray="8 4 2 4" style="stroke:var(--bp-sub);stroke-opacity:.45"/>`;
+      s+=`<circle cy="${y}" cx="${r2(-m*0.82)}" r="${r2(fu*0.95)}" class="bp-paper" style="stroke:var(--bp-line);stroke-width:1px"/>`+txt(-m*0.82,y+fu*0.38,String(i+1),fu*1.05,'bp-txt','middle','font-weight="700"');});
+  }
+  // equipment
+  if(layers.equip) s+=`<g>${t.equip.map(e=>equipSVG(e,fu)).join('')}</g>`;
+  // walls
+  const wm=wallModel(t);
+  wm.forEach(w=>{w.solids.forEach(([a,b])=>{
+    const ea=(w.ext&&Math.abs(a-w.a)<1e-6)?w.th/2:0, eb=(w.ext&&Math.abs(b-w.b)<1e-6)?w.th/2:0;
+    s+=w.horiz?`<rect x="${r2(a-ea)}" y="${r2(w.c-w.th/2)}" width="${r2(b-a+ea+eb)}" height="${w.th}" class="bp-wall"/>`
+              :`<rect y="${r2(a-ea)}" x="${r2(w.c-w.th/2)}" height="${r2(b-a+ea+eb)}" width="${w.th}" class="bp-wall"/>`;});
+    w.openings.forEach(p=>s+=openingSVG(w,p));});
+  // power layer
+  if(layers.power){
+    const runs=powerRuns(t);
+    t.rtus.forEach(([x,y])=>{s+=`<rect x="${r2(x-fu*1.4)}" y="${r2(y-fu)}" width="${r2(fu*2.8)}" height="${r2(fu*2)}" class="bp-ln" stroke-dasharray="3 2" style="stroke:#c0702b"/>`+txt(x,y+fu*0.3,'RTU',fu*0.6,'bp-sub halo');});
+    runs.forEach(r=>{
+      let d='';r.loads.forEach(([lx,ly])=>{d+=`M${r2(r.px)} ${r2(r.py)}V${r2(r.ty)}H${r2(lx)}V${r2(ly)}`;});
+      s+=`<path d="${d}" fill="none" stroke="${r.color}" style="stroke-width:1.6px;stroke-opacity:.9"/>`;
+      r.loads.forEach(([lx,ly])=>s+=`<circle cx="${r2(lx)}" cy="${r2(ly)}" r="${r2(fu*0.28)}" fill="${r.color}"/>`);
+    });
+    runs.forEach(r=>{s+=`<rect x="${r2(r.px-fu*0.5)}" y="${r2(r.py-fu*0.7)}" width="${r2(fu)}" height="${r2(fu*1.4)}" fill="${r.color}" style="stroke:var(--bp-bg);stroke-width:1px"/>`;});
+  }
+  // room tags
+  t.rooms.forEach(r=>{const [x0,y0,x1,y1]=r.r;const cx=r.tp?r.tp[0]:(x0+x1)/2,cy=r.tp?r.tp[1]:(y0+y1)/2;const small=(y1-y0)<fu*4;
+    s+=tag(cx,cy,small?[r.n.toUpperCase()]:[r.n.toUpperCase(),`${fmt(r.area)} SF`],fu*(small?0.62:0.78));});
+  // dimensions
+  if(layers.dims){
+    const dimH=(xs,y,big)=>{let d='';for(let i=0;i<xs.length-1;i++){const a=xs[i],b=xs[i+1];
+        d+=`<line x1="${a}" x2="${b}" y1="${r2(y)}" y2="${r2(y)}" class="bp-dim"/>`+txt((a+b)/2,y-fu*0.4,ftin(b-a),fu*(big?0.8:0.66),'bp-dimt mono');}
+      xs.forEach(x=>d+=`<line x1="${r2(x-fu*0.35)}" x2="${r2(x+fu*0.35)}" y1="${r2(y+fu*0.35)}" y2="${r2(y-fu*0.35)}" class="bp-dim" style="stroke-width:1.6px"/><line x1="${x}" x2="${x}" y1="${r2(y-fu*0.6)}" y2="${r2(y+fu*0.6)}" class="bp-dim"/>`);return d;};
+    const dimV=(ys,x,big)=>{let d='';for(let i=0;i<ys.length-1;i++){const a=ys[i],b=ys[i+1];
+        d+=`<line y1="${a}" y2="${b}" x1="${r2(x)}" x2="${r2(x)}" class="bp-dim"/>`+txt(x-fu*0.4,(a+b)/2,ftin(b-a),fu*(big?0.8:0.66),'bp-dimt mono','middle',`transform="rotate(-90 ${r2(x-fu*0.4)} ${r2((a+b)/2)})"`);}
+      ys.forEach(y=>d+=`<line y1="${r2(y-fu*0.35)}" y2="${r2(y+fu*0.35)}" x1="${r2(x+fu*0.35)}" x2="${r2(x-fu*0.35)}" class="bp-dim" style="stroke-width:1.6px"/><line y1="${y}" y2="${y}" x1="${r2(x-fu*0.6)}" x2="${r2(x+fu*0.6)}" class="bp-dim"/>`);return d;};
+    s+=dimH(t.grid,-m*0.3,false)+dimH([0,W],-m*0.52,true)+dimV(t.gridY,-m*0.3,false)+dimV([0,H],-m*0.52,true);
+  }
+  // north arrow + title block
+  const nx=-m*0.45,ny=H+m*0.6,nr=fu*1.6;
+  s+=`<g><circle cx="${r2(nx)}" cy="${r2(ny)}" r="${r2(nr)}" class="bp-ln"/><path d="M${r2(nx)} ${r2(ny-nr*0.9)}L${r2(nx+nr*0.45)} ${r2(ny+nr*0.55)}L${r2(nx)} ${r2(ny+nr*0.2)}Z" class="bp-dark"/>${txt(nx,ny+nr+fu*1.1,'N',fu,'bp-txt','middle','font-weight="700"')}</g>`;
+  const tw=Math.max(W*0.62,fu*30),tx=W+m*0.55-tw,ty=H+m*0.3,th=m*0.62;
+  s+=`<rect x="${r2(tx)}" y="${r2(ty)}" width="${r2(tw)}" height="${r2(th)}" class="bp-paper" style="stroke:var(--bp-line);stroke-width:1.2px"/>`;
+  s+=`<line x1="${r2(tx+tw*0.7)}" x2="${r2(tx+tw*0.7)}" y1="${r2(ty)}" y2="${r2(ty+th)}" class="bp-ln"/>`;
+  s+=txt(tx+fu*0.8,ty+th*0.32,`RHIZOVA · ${t.name.toUpperCase()}`,fu*0.95,'bp-txt','start','font-weight="700" letter-spacing=".06em"');
+  s+=txt(tx+fu*0.8,ty+th*0.58,`Floor plan · ${fmt(t.area)} SF · ${t.W}' × ${t.H}' · clear height ${t.wallH}'`,fu*0.62,'bp-sub','start');
+  s+=txt(tx+fu*0.8,ty+th*0.82,'Schematic design. Not for construction.',fu*0.55,'bp-sub','start','font-style="italic"');
+  s+=txt(tx+tw*0.85,ty+th*0.45,'A-101',fu*1.4,'bp-txt','middle','font-weight="700"');
+  s+=txt(tx+tw*0.85,ty+th*0.75,'SHEET',fu*0.5,'bp-sub mono','middle','letter-spacing=".1em"');
+  return {inner:s,vb:{x:-m,y:-m,w:W+2*m,h:H+2*m}};
+}
+
+/* ================= SITE PLAN ================= */
+function seeded(n){let x=Math.sin(n*9301+49297)*233280;return x-Math.floor(x);}
+function stallList(p){ // returns stall rects
+  const out=[];for(let i=0;i<p.n;i++){out.push({x:p.x+i*9,y:p.y,w:9,h:18,ada:i<(p.ada||0),dir:p.dir,i});}return out;
+}
+function sitePlanSVG(t){
+  const S=t.site,b=S.bounds,W=t.W,H=t.H,bw=b[2]-b[0],bh=b[3]-b[1],fu=Math.max(bw,bh)/70,m=bw*0.05;
+  let s=`<defs>
+    <pattern id="hatch-${t.key}" width="${r2(fu*0.9)}" height="${r2(fu*0.9)}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="${r2(fu*0.9)}" class="bp-ln" style="stroke-opacity:.35"/></pattern>
+    <pattern id="pv-${t.key}" width="3.4" height="40" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="40" style="stroke:var(--bp-bg);stroke-opacity:.5;stroke-width:.6px"/></pattern>
+  </defs>`;
+  s+=`<rect x="${b[0]-m*4}" y="${b[1]-m*4}" width="${bw+m*8}" height="${bh+m*10}" class="bp-paper"/>`;
+  s+=`<rect x="${b[0]}" y="${b[1]}" width="${bw}" height="${bh}" class="st-grass"/>`;
+  s+=`<rect x="${b[0]}" y="${b[1]}" width="${bw}" height="${bh}" class="bp-ln" stroke-dasharray="14 4 2 4" style="stroke-width:1.4px"/>`;
+  if(S.pond)s+=`<ellipse cx="${S.pond.x}" cy="${S.pond.y}" rx="${S.pond.rx}" ry="${S.pond.ry}" class="st-pond"/>`;
+  // paving
+  S.pave.forEach(p=>{s+=`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" class="st-${p.k}"/>`;
+    if(p.k==='road')s+=`<line x1="${p.x}" x2="${p.x+p.w}" y1="${p.y+p.h/2}" y2="${p.y+p.h/2}" stroke="#e7c94a" style="stroke-width:1.2px" stroke-dasharray="10 8"/>`;});
+  // parking + cars
+  let ci=0;
+  (S.parking||[]).forEach(p=>{stallList(p).forEach(st=>{
+    if(st.ada)s+=`<rect x="${st.x}" y="${st.y}" width="9" height="18" class="st-ada"/>`;
+    s+=`<line x1="${st.x}" x2="${st.x}" y1="${st.y}" y2="${st.y+18}" class="st-stripe"/>`;
+    if(st.i===p.n-1)s+=`<line x1="${st.x+9}" x2="${st.x+9}" y1="${st.y}" y2="${st.y+18}" class="st-stripe"/>`;
+    if(seeded(++ci)<0.62&&!st.ada)s+=`<rect x="${st.x+1.6}" y="${st.y+(p.dir==='down'?1.5:2)}" width="5.8" height="14.5" rx="1.6" class="bp-eq" style="fill-opacity:.9"/>`;
+  });});
+  // gardens
+  (S.gardens||[]).forEach(([x,y,w,h])=>s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="bp-green" fill-opacity=".7"/>`);
+  // solar field
+  if(S.solar){const o=S.solar;for(let r=0;r<o.rows;r++){const y=o.y+r*o.pitch;
+    s+=`<rect x="${o.x}" y="${y}" width="${o.w}" height="${o.depth}" class="st-solar"/><rect x="${o.x}" y="${y}" width="${o.w}" height="${o.depth}" fill="url(#pv-${t.key})"/>`;}}
+  if(S.fence)s+=`<polyline points="${S.fence.map(p=>p.join(',')).join(' ')}" class="bp-ln" stroke-dasharray="6 2 1 2" style="stroke-width:1.2px"/>`;
+  // building footprint
+  s+=`<rect x="0" y="0" width="${W}" height="${H}" class="bp-paper"/><rect x="0" y="0" width="${W}" height="${H}" fill="url(#hatch-${t.key})"/>`;
+  const rs=t.roofSolar;
+  s+=`<rect x="${rs.x}" y="${rs.y}" width="${rs.w}" height="${rs.h}" class="st-solar" fill-opacity=".28"/><rect x="${rs.x}" y="${rs.y}" width="${rs.w}" height="${rs.h}" class="bp-ln" stroke-dasharray="4 3"/>`;
+  t.rtus.forEach(([x,y])=>s+=`<rect x="${x-fu*0.7}" y="${y-fu*0.5}" width="${fu*1.4}" height="${fu}" class="bp-eq"/>`);
+  s+=`<rect x="0" y="0" width="${W}" height="${H}" fill="none" style="stroke:var(--bp-wall);stroke-width:2.6px"/>`;
+  // exterior openings markers
+  t.doors.forEach(d=>{const onExt=(d.dir==='h'&&(d.y===0||d.y===H))||(d.dir==='v'&&(d.x===0||d.x===W));if(!onExt)return;
+    const sz=d.type==='roll'?fu*0.9:fu*0.6;let pts;
+    if(d.dir==='h'){const out=d.y===0?-1:1;pts=[[d.x-sz,d.y+out*sz*1.6],[d.x+sz,d.y+out*sz*1.6],[d.x,d.y+out*sz*0.2]];}
+    else{const out=d.x===0?-1:1;pts=[[d.x+out*sz*1.6,d.y-sz],[d.x+out*sz*1.6,d.y+sz],[d.x+out*sz*0.2,d.y]];}
+    s+=`<polygon points="${pts.map(p=>p.map(r2).join(',')).join(' ')}" fill="${d.type==='roll'?'#c0702b':'var(--accent)'}"/>`;});
+  s+=tag(W/2,H/2,[t.name.toUpperCase(),`${fmt(t.area)} SF · ${t.W}'×${t.H}'`],fu*0.9);
+  // trucks
+  (S.trucks||[]).forEach(tr=>{const y=tr.y;s+=`<rect x="${W+2}" y="${y-4.25}" width="53" height="8.5" class="bp-eq"/><rect x="${W+56}" y="${y-4}" width="10" height="8" rx="1.5" fill="#1f4d3a"/>`;});
+  // cisterns & pads
+  (S.cisterns||[]).forEach(([x,y,r])=>s+=`<circle cx="${x}" cy="${y}" r="${r}" class="bp-water"/><circle cx="${x}" cy="${y}" r="${r2(r*0.4)}" class="bp-eqln"/>`);
+  (S.pads||[]).forEach(p=>{
+    s+=p.c==='canopy'?`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" class="bp-ln" stroke-dasharray="4 2" style="stroke-width:1.2px"/>`
+      :`<rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" class="${p.c==='sign'?'bp-dark':'bp-eq'}"/>`;
+    if(p.c!=='sign'&&p.c!=='canopy')s+=txt(p.x+p.w/2,p.y+p.h+fu*0.75,p.label,fu*0.55,'bp-sub halo','middle','font-weight="600"');});
+  // trees on top
+  (S.trees||[]).forEach(([x,y,r])=>{if(!r)return;s+=`<circle cx="${x}" cy="${y}" r="${r}" class="st-tree"/><circle cx="${x}" cy="${y}" r="${r2(r*0.15)}" style="fill:var(--tree-line)"/>`;});
+  // labels
+  (S.labels||[]).forEach(([x,y,l])=>s+=tag(x,y,[l],fu*0.62));
+  // north arrow + scale bar + title
+  const yb=b[3]+m*1.4, sb=bw>400?100:bw>200?50:20;
+  s+=`<g><path d="M${b[0]} ${r2(yb)}h${sb}" class="bp-ln" style="stroke-width:2px"/>`;
+  [0,sb/2,sb].forEach(k=>s+=`<line x1="${b[0]+k}" x2="${b[0]+k}" y1="${r2(yb-fu*0.4)}" y2="${r2(yb+fu*0.4)}" class="bp-ln"/>`);
+  s+=`<rect x="${b[0]}" y="${r2(yb-fu*0.2)}" width="${sb/2}" height="${r2(fu*0.4)}" class="bp-dark"/>`;
+  s+=txt(b[0],yb+fu*1.4,'0',fu*0.6,'bp-sub mono','start')+txt(b[0]+sb,yb+fu*1.4,`${sb} ft`,fu*0.6,'bp-sub mono','middle')+`</g>`;
+  const nx=b[0]+sb+fu*5,nr=fu*1.3;
+  s+=`<circle cx="${r2(nx)}" cy="${r2(yb)}" r="${r2(nr)}" class="bp-ln"/><path d="M${r2(nx)} ${r2(yb-nr*0.9)}L${r2(nx+nr*0.45)} ${r2(yb+nr*0.55)}L${r2(nx)} ${r2(yb+nr*0.2)}Z" class="bp-dark"/>`;
+  s+=txt(b[2],yb-fu*0.2,`RHIZOVA · ${t.name.toUpperCase()} · SITE PLAN`,fu*0.85,'bp-txt','end','font-weight="700" letter-spacing=".06em"');
+  s+=txt(b[2],yb+fu*1.1,`Site ≈ ${t.siteAcres.toFixed(2)} acres · ${t.stalls} parking stalls · Sheet C-101 · schematic`,fu*0.6,'bp-sub','end');
+  return {inner:s,vb:{x:b[0]-m,y:b[1]-m,w:bw+2*m,h:bh+m*3.6}};
+}
+
+/* ================= SINGLE-LINE DIAGRAM ================= */
+function sldSVG(t){
+  const L=t.sld,atsIds=(L.ats||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const panels=[...t.power.panels].sort((a,b)=>(atsIds.includes(b.id)-atsIds.includes(a.id)));
+  const B0=56,rowH=13,B1=B0+6+panels.length*rowH,VH=B1+10,fs=2.5,bx=14;
+  let s=`<rect x="-20" y="-20" width="140" height="${VH+40}" class="bp-paper"/>`;
+  const label=(x,y,a,b2,anchor)=>txt(x,y,a,fs,'bp-txt',anchor||'start','font-weight="600"')+(b2?txt(x,y+fs*1.15,b2,fs*0.8,'bp-sub',anchor||'start'):'');
+  const brk=(x,y)=>`<rect x="${x-1.6}" y="${y-1.6}" width="3.2" height="3.2" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/>`;
+  // utility chain
+  s+=`<line x1="${bx}" x2="${bx}" y1="6" y2="${B1}" class="bp-ln" style="stroke-width:1.4px"/>`;
+  s+=`<circle cx="${bx}" cy="5" r="3" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/><path d="M${bx-1.8} 5q.9-1.6 1.8 0t1.8 0" class="bp-ln"/>`+label(bx+5,4,'Utility service',t.service);
+  const [xa,xb]=L.xfmr.split(' · '), [ma,mb]=L.main.split(' main ');
+  s+=`<circle cx="${bx}" cy="15" r="2.6" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/><circle cx="${bx}" cy="18.6" r="2.6" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/>`+label(bx+5,16,xa,xb);
+  s+=`<circle cx="${bx}" cy="28" r="2.6" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/>`+txt(bx,28.9,'M',fs*0.9,'bp-txt','middle','font-weight="700"')+label(bx+5,28.5,'Revenue meter');
+  s+=brk(bx,38)+label(bx+5,38.5,'Main '+(mb||'breaker'),ma);
+  // main bus
+  s+=`<line x1="${bx}" x2="${bx}" y1="${B0}" y2="${B1}" style="stroke:var(--bp-wall);stroke-width:4px"/>`+txt(bx-2,B0+3,'MAIN BUS',fs*0.7,'bp-sub mono','end');
+  // solar (+ battery)
+  if(L.solar){const px=62;
+    s+=`<rect x="${px-4}" y="2" width="8" height="5.5" class="st-solar"/><line x1="${px-4}" y1="7.5" x2="${px+4}" y2="2" class="bp-ln" style="stroke:var(--bp-bg)"/>`+label(px+6,4,'Solar PV',L.solar);
+    s+=`<line x1="${px}" x2="${px}" y1="7.5" y2="46" class="bp-ln" style="stroke-width:1.4px"/><rect x="${px-3}" y="15" width="6" height="5" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/>`+txt(px,18.4,'INV',fs*0.7,'bp-txt mono','middle','font-weight="700"');
+    if(L.battery){s+=`<line x1="${px+3}" x2="${px+14}" y1="${17.5}" y2="${17.5}" class="bp-ln"/><rect x="${px+14}" y="14.5" width="8" height="6" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/>`+txt(px+18,18.4,'BESS',fs*0.6,'bp-txt mono','middle','font-weight="700"')+txt(px+18,24,L.battery,fs*0.7,'bp-sub','middle');}
+    s+=brk(px,30)+label(px-3,31,'PV breaker','backfeed tie','end');
+    s+=`<path d="M${px} 46H${bx}" class="bp-ln" style="stroke-width:1.4px"/><circle cx="${bx}" cy="46" r="1.1" style="fill:var(--bp-wall)"/>`;
+  }
+  // generator
+  const atsRows=panels.map((p,i)=>({p,y:B0+6+i*rowH+rowH/2})).filter(r=>atsIds.includes(r.p.id));
+  const gx=30, lastAts=atsRows.length?atsRows[atsRows.length-1].y:0;
+  if(L.gen){const gX=94,gy=36,[ga,gb]=L.gen.split(' · ');
+    s+=`<circle cx="${gX}" cy="${gy}" r="3.2" class="bp-paper" style="stroke:var(--bp-wall);stroke-width:1.2px"/>`+txt(gX,gy+1,'G',fs,'bp-txt','middle','font-weight="700"')+label(gX-4.5,gy-0.6,'Standby '+ga.toLowerCase(),gb,'end');
+    s+=`<path d="M${gX} ${gy+3.2}V51H${gx}V${lastAts-4}" class="bp-ln" style="stroke-width:1.4px;stroke:#b23b4a"/>`;
+    atsRows.forEach(r=>s+=`<path d="M${gx} ${r.y-4}H23V${r.y-2.4}" class="bp-ln" style="stroke:#b23b4a;stroke-width:1.4px"/>`);
+  }
+  // feeders + panels
+  panels.forEach((p,i)=>{const y=B0+6+i*rowH+rowH/2,isAts=atsIds.includes(p.id);
+    s+=`<line x1="${bx}" x2="34" y1="${y}" y2="${y}" class="bp-ln" style="stroke-width:1.4px"/><circle cx="${bx}" cy="${y}" r="1" style="fill:var(--bp-wall)"/>`+brk(17,y);
+    if(isAts)s+=`<rect x="20" y="${y-2.4}" width="6" height="4.8" class="bp-paper" style="stroke:#b23b4a;stroke-width:1.4px"/>`+txt(23,y+0.9,'ATS',fs*0.6,'bp-txt mono','middle','font-weight="700"');
+    if(L.gen&&atsRows.length&&y<lastAts-4) /* hop over the generator line */
+      s+=`<rect x="${gx-1.2}" y="${y-0.6}" width="2.4" height="1.2" class="bp-paper"/><path d="M${gx-1.2} ${y}a1.2 1.2 0 0 1 2.4 0" class="bp-ln" style="stroke-width:1.4px"/>`;
+    s+=`<rect x="34" y="${y-4.5}" width="58" height="9" rx="1" class="bp-paper" style="stroke:${p.color};stroke-width:1.6px"/><rect x="34" y="${y-4.5}" width="2" height="9" fill="${p.color}"/>`;
+    s+=txt(38,y-0.6,`${p.id}  ${p.n}`,fs*0.95,'bp-txt','start','font-weight="700"')+txt(38,y+2.9,`${p.rate} feeder${isAts?' · generator-backed':''}`,fs*0.78,'bp-sub','start');
+  });
+  s+=txt(0,VH-1,'Schematic single-line diagram. Ratings are planning estimates for a licensed electrical engineer to verify.',fs*0.7,'bp-sub','start','font-style="italic"');
+  return {inner:s,vb:{x:-4,y:-2,w:104,h:VH+2}};
+}
+
+/* ================= 3D MODEL (three.js r128) ================= */
+const M3={ready:false,groups:{},cur:null,mode:'cutaway',labels:true,active:true};
+const FY=0.5; // finished floor height above grade
+const clipPlane=new THREE.Plane(new THREE.Vector3(0,-1,0),1e5);
+const MATS={};
+function mat(key,color,o){if(MATS[key])return MATS[key];const m=new THREE.MeshStandardMaterial({color,roughness:0.85,metalness:0.02,...(o||{})});MATS[key]=m;return m;}
+function clipMat(key,color,o){const m=mat(key,color,o);m.clippingPlanes=[clipPlane];m.clipShadows=true;return m;}
+const UNIT=new THREE.BoxGeometry(1,1,1);
+const EDGE=new THREE.EdgesGeometry(UNIT);
+const FLOORC={aqua:0x9db8b5,micro:0xc3d1b1,mech:0xb4b1aa,ctrl:0xb2bdcc,pack:0xd5cab8,office:0xc29f76,circ:0xd8d5ce,train:0xc8a87e,power:0xd3c99c};
+const BOXC={cooler:0xf3f5f5,filter:0x7d98a6,sump:0x5d7b88,pump:0x4f6d84,elec:0x8b9397,server:0x23282d,screen:0x15181b,desk:0xa98457,table:0xc19d6d,steel:0xc2c7ca,pallet:0xb08550,battery:0x3a4750,exhibit:0x1f4d3a,gen:0x3d5a4b,xfmr:0x56665d,dumpster:0x2e5c88,sign:0x1f4d3a,canopy:0x2c3833};
+
+function addBox(g,cx,cy,cz,w,h,d,m,sh){const o=new THREE.Mesh(UNIT,m);o.scale.set(w,h,d);o.position.set(cx,cy,cz);
+  if(sh!==false){o.castShadow=true;o.receiveShadow=true;}g.add(o);return o;}
+function instBoxes(g,list,m,sh){ // list: [cx,cy,cz,w,h,d,rx,color]
+  if(!list.length)return;const im=new THREE.InstancedMesh(UNIT,m,list.length);const o=new THREE.Object3D();
+  list.forEach((b,i)=>{o.position.set(b[0],b[1],b[2]);o.rotation.set(b[6]||0,0,0);o.scale.set(b[3],b[4],b[5]);o.updateMatrix();im.setMatrixAt(i,o.matrix);
+    if(b[7]!==undefined)im.setColorAt(i,new THREE.Color(b[7]));});
+  if(sh!==false){im.castShadow=true;im.receiveShadow=true;}g.add(im);return im;}
+function flat(g,x,z,w,d,y,m){const o=new THREE.Mesh(new THREE.PlaneGeometry(w,d),m);o.rotation.x=-Math.PI/2;o.position.set(x+w/2,y,z+d/2);o.receiveShadow=true;g.add(o);return o;}
+
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t;}
+const ribTex=()=>MATS._rib||(MATS._rib=canvasTex(64,256,(x,w,h)=>{x.fillStyle='#b4bbbe';x.fillRect(0,0,w,h);x.fillStyle='#8f979b';for(let y=0;y<h;y+=16)x.fillRect(0,y,w,3);}));
+function brandTex(line2){return canvasTex(1024,256,(x,w,h)=>{x.fillStyle='#f3f2ec';x.fillRect(0,0,w,h);x.fillStyle='#1f4d3a';x.fillRect(0,h-34,w,34);
+  x.font='700 120px Georgia, serif';x.textAlign='center';x.fillText('RHIZOVA',w/2,140);x.font='600 34px sans-serif';x.fillStyle='#b8901a';x.fillText(line2,w/2,196);});}
+function labelSprite(text,sub,hWorld){
+  const tex=canvasTex(1024,sub?220:150,(x,w,h)=>{x.font='700 64px "IBM Plex Sans", sans-serif';const tw=x.measureText(text).width;x.font='500 46px "IBM Plex Mono", monospace';const sw=sub?x.measureText(sub).width:0;
+    const bw=Math.min(w-8,Math.max(tw,sw)+80);x.fillStyle='rgba(255,255,255,0.93)';const r=26,x0=(w-bw)/2;
+    x.beginPath();x.moveTo(x0+r,4);x.arcTo(x0+bw,4,x0+bw,h-4,r);x.arcTo(x0+bw,h-4,x0,h-4,r);x.arcTo(x0,h-4,x0,4,r);x.arcTo(x0,4,x0+bw,4,r);x.fill();
+    x.strokeStyle='#1f4d3a';x.lineWidth=5;x.stroke();x.fillStyle='#16231c';x.textAlign='center';x.font='700 64px "IBM Plex Sans", sans-serif';x.fillText(text,w/2,sub?92:98);
+    if(sub){x.fillStyle='#5b6b60';x.font='500 46px "IBM Plex Mono", monospace';x.fillText(sub,w/2,168);}});
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false,transparent:true}));
+  const asp=1024/(sub?220:150);sp.scale.set(hWorld*asp,hWorld,1);sp.renderOrder=10;return sp;
+}
+
+/* ---------- building ---------- */
+function buildBuilding(t,g){
+  const H=t.wallH,rollH=Math.min(H-3,t.key==='small'?10:t.key==='medium'?14:16),doorH=7.5;
+  const wallExt=clipMat('wallExt',0xe1e4e1),wallInt=clipMat('wallInt',0xf3f1ec),edgeM=new THREE.LineBasicMaterial({color:0x56625b,transparent:true,opacity:0.45,clippingPlanes:[clipPlane]});
+  const glass=clipMat('glass',0x8fc3dc,{transparent:true,opacity:0.38,roughness:0.1,metalness:0.2});
+  const doorExt=clipMat('doorExt',0x1f4d3a),doorInt=clipMat('doorInt',0x8a6a48);
+  const roll=clipMat('roll',0xffffff,{map:ribTex(),roughness:0.6,metalness:0.3});
+  // slab + floors
+  addBox(g,t.W/2,FY/2,t.H/2,t.W+1.4,FY,t.H+1.4,mat('slab',0xbdb9b0),true);
+  t.rooms.forEach(r=>{const [x0,y0,x1,y1]=r.r;flat(g,x0,y0,x1-x0,y1-y0,FY+0.02,mat('fl-'+r.k,FLOORC[r.k],{roughness:0.55}));});
+  // walls
+  wallModel(t).forEach(w=>{
+    const m=w.ext?wallExt:wallInt;
+    const piece=(a,b,y0,y1,mm)=>{if(b-a<0.02||y1-y0<0.02)return;
+      const ea=(w.ext&&Math.abs(a-w.a)<1e-6)?w.th/2:0,eb=(w.ext&&Math.abs(b-w.b)<1e-6)?w.th/2:0,len=b-a+ea+eb,mid=(a-ea+b+eb)/2,cy=FY+(y0+y1)/2;
+      const o=w.horiz?addBox(g,mid,cy,w.c,len,y1-y0,w.th,mm):addBox(g,w.c,cy,mid,w.th,y1-y0,len,mm);
+      const e=new THREE.LineSegments(EDGE,edgeM);e.position.copy(o.position);e.scale.copy(o.scale);g.add(e);};
+    w.solids.forEach(([a,b])=>piece(a,b,0,H,m));
+    w.openings.forEach(p=>{const o=p.o,wd=p.e-p.s,mid=(p.s+p.e)/2;
+      if(o.kind==='win'){piece(p.s,p.e,0,3.5,m);piece(p.s,p.e,7.5,H,m);
+        w.horiz?addBox(g,mid,FY+5.5,w.c,wd,4,0.12,glass,false):addBox(g,w.c,FY+5.5,mid,0.12,4,wd,glass,false);return;}
+      const oh=o.type==='roll'?rollH:doorH;piece(p.s,p.e,oh,H,m);
+      if(o.type==='roll'){w.horiz?addBox(g,mid,FY+oh/2,w.c,wd,oh,0.3,roll):addBox(g,w.c,FY+oh/2,mid,0.3,oh,wd,roll);return;}
+      const dm=w.ext?doorExt:doorInt,sg=o.s||1,th=0.62;
+      const leaf=(hx,hz,len,dirSign,rot)=>{const pv=new THREE.Object3D();pv.position.set(hx,FY,hz);
+        const lf=new THREE.Mesh(UNIT,dm);lf.castShadow=true;
+        if(w.horiz){lf.scale.set(len-0.08,doorH-0.15,0.15);lf.position.set(dirSign*len/2,(doorH-0.15)/2,0);}
+        else{lf.scale.set(0.15,doorH-0.15,len-0.08);lf.position.set(0,(doorH-0.15)/2,dirSign*len/2);}
+        pv.add(lf);pv.rotation.y=rot;g.add(pv);};
+      if(w.horiz){ if(o.type==='single')leaf(p.s,w.c,wd,1,-sg*th); else{leaf(p.s,w.c,wd/2,1,-sg*th);leaf(p.e,w.c,wd/2,-1,sg*th);} }
+      else{ if(o.type==='single')leaf(w.c,p.s,wd,1,sg*th); else{leaf(w.c,p.s,wd/2,1,sg*th);leaf(w.c,p.e,wd/2,-1,-sg*th);} }
+    });
+  });
+  // roof group
+  const roof=new THREE.Group();roof.name='roof';
+  addBox(roof,t.W/2,FY+H+0.5,t.H/2,t.W+1,1,t.H+1,mat('roof',0xb3b8ba));
+  const pm=mat('parapet',0xd6d9d6);
+  [[t.W/2,0,t.W+1,1],[t.W/2,t.H,t.W+1,1]].forEach(([x,z,w,d])=>addBox(roof,x,FY+H+1.75,z,w,3.5,d,pm));
+  [[0,t.H/2],[t.W,t.H/2]].forEach(([x,z])=>addBox(roof,x,FY+H+1.75,z,1,3.5,t.H+1,pm));
+  const rs=t.roofSolar,rowD=rs.h/rs.rows,seg=Math.min(16,rs.w),pv=[];
+  for(let r=0;r<rs.rows;r++)for(let x=rs.x;x+seg<=rs.x+rs.w+0.01;x+=seg)pv.push([x+seg/2,FY+H+2.4,rs.y+r*rowD+rowD*0.35,seg-0.6,0.22,rowD*0.6,0.17]);
+  instBoxes(roof,pv,mat('pv',0x1f3552,{roughness:0.35,metalness:0.35}));
+  t.rtus.forEach(([x,z])=>{addBox(roof,x,FY+H+3.3,z,8,4.6,5.5,mat('rtu',0xc9cdcf));
+    const f=new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,0.3,20),mat('fan',0x3b4044));f.position.set(x+1.8,FY+H+5.7,z);roof.add(f);});
+  g.add(roof);
+}
+
+/* ---------- equipment ---------- */
+function buildEquipment(t,g){
+  const tankM=mat('tank',0xdfe5e7,{side:THREE.DoubleSide,roughness:0.5}),waterM=mat('water',0x2c7ea3,{roughness:0.15,metalness:0.1}),
+        bedM=mat('bed',0xe4e2db),greenM=mat('greens',0x5e9e46,{roughness:0.9}),frameM=mat('rackF',0xcfd4d6,{metalness:0.4,roughness:0.4}),
+        ledM=mat('led',0xf4c8ff,{emissive:0xd96bff,emissiveIntensity:0.9});
+  const posts=[],shelves=[],trays=[],leds=[];
+  t.equip.forEach(e=>{
+    if(e.t==='tank'){const s=new THREE.Mesh(new THREE.CylinderGeometry(e.r,e.r,e.ht,40,1,true),tankM);s.position.set(e.x,FY+e.ht/2,e.y);s.castShadow=true;s.receiveShadow=true;g.add(s);
+      const wtr=new THREE.Mesh(new THREE.CircleGeometry(e.r*0.98,40),waterM);wtr.rotation.x=-Math.PI/2;wtr.position.set(e.x,FY+e.ht-0.5,e.y);g.add(wtr);
+      const rim=new THREE.Mesh(new THREE.TorusGeometry(e.r,0.14,6,48),mat('rim',0x9aa6ab));rim.rotation.x=Math.PI/2;rim.position.set(e.x,FY+e.ht,e.y);g.add(rim);}
+    else if(e.t==='bed'){addBox(g,e.x+e.w/2,FY+1.2,e.y+e.h/2,e.w,2.4,e.h,bedM);flat(g,e.x+0.25,e.y+0.25,e.w-0.5,e.h-0.5,FY+2.42,greenM);}
+    else if(e.t==='rack'){const H=8.5,cx=e.x+e.w/2,cz=e.y+e.h/2;
+      [[e.x+0.1,e.y+0.1],[e.x+e.w-0.1,e.y+0.1],[e.x+0.1,e.y+e.h-0.1],[e.x+e.w-0.1,e.y+e.h-0.1]].forEach(([x,z])=>posts.push([x,FY+H/2,z,0.18,H,0.18]));
+      [0.9,2.9,4.9,6.9].forEach(y=>{shelves.push([cx,FY+y,cz,e.w,0.12,e.h]);trays.push([cx,FY+y+0.22,cz,e.w*0.9,0.3,e.h*0.96]);leds.push([cx,FY+y+1.85,cz,e.w*0.55,0.06,e.h*0.94]);});
+      shelves.push([cx,FY+H,cz,e.w,0.12,e.h]);}
+    else{const c=e.c;
+      if(c==='pallet'){addBox(g,e.x+e.w/2,FY+0.3,e.y+e.h/2,e.w,0.6,e.h,mat('pallet',BOXC.pallet));
+        for(let k=0;k<Math.floor(e.h/6);k++)addBox(g,e.x+e.w/2,FY+0.6+1.6,e.y+3+k*6,e.w*0.75,3.2,4,mat('crate',0xc9a46e));return;}
+      const m=c==='screen'?mat('screen',BOXC.screen,{emissive:0x1d4f8a,emissiveIntensity:0.55}):mat('bx-'+c,BOXC[c]||0xbfc4c6);
+      addBox(g,e.x+e.w/2,FY+e.ht/2,e.y+e.h/2,e.w,e.ht,e.h,m);
+      if(c==='battery')addBox(g,e.x+e.w/2,FY+e.ht*0.8,e.y+e.h+0.03,e.w*0.9,0.2,0.05,mat('bled',0x7cf0a0,{emissive:0x3fd17a,emissiveIntensity:1}),false);
+    }
+  });
+  instBoxes(g,posts,frameM);instBoxes(g,shelves,frameM);instBoxes(g,trays,greenM);instBoxes(g,leds,ledM,false);
+}
+
+/* ---------- site ---------- */
+function buildSite(t,g){
+  const S=t.site,b=S.bounds,bw=b[2]-b[0],bh=b[3]-b[1];
+  flat(g,b[0]-bw*0.6,b[1]-bh*0.6,bw*2.2,bh*2.2,-0.02,mat('far',0x93a684));
+  flat(g,b[0],b[1],bw,bh,0,mat('grass',0x7f9b68));
+  const lv={road:0.05,asph:0.07,gravel:0.06};
+  S.pave.forEach(p=>{if(p.k==='conc')addBox(g,p.x+p.w/2,0.2,p.y+p.h/2,p.w,0.4,p.h,mat('conc',0xcdc8bd),true);
+    else flat(g,p.x,p.y,p.w,p.h,lv[p.k],mat(p.k,p.k==='gravel'?0xb5ad9b:p.k==='road'?0x3f4246:0x4b4f53,{roughness:0.95}));
+    if(p.k==='road'){const dashes=[];for(let x=p.x+4;x<p.x+p.w-8;x+=20)dashes.push([x+5,0.09,p.y+p.h/2,10,0.02,0.6]);instBoxes(g,dashes,mat('dash',0xe7c94a),false);}});
+  if(S.pond){const o=new THREE.Mesh(new THREE.CircleGeometry(1,48),mat('pond',0x4f87a0,{roughness:0.2}));o.rotation.x=-Math.PI/2;o.scale.set(S.pond.rx,S.pond.ry,1);o.position.set(S.pond.x,0.08,S.pond.y);g.add(o);
+    const rimg=new THREE.Mesh(new THREE.RingGeometry(1,1.08,48),mat('pondEdge',0x9b9a86));rimg.rotation.x=-Math.PI/2;rimg.scale.set(S.pond.rx,S.pond.ry,1);rimg.position.set(S.pond.x,0.09,S.pond.y);g.add(rimg);}
+  // parking, cars
+  const stripes=[],ada=[],bodies=[],cabs=[],pal=[0xf2f2f2,0x2d2f33,0x9aa3ab,0x7a1f24,0x1f3f66,0xc8c3b8,0x3c5a46,0x8b8f94];let ci=0;
+  (S.parking||[]).forEach(p=>stallList(p).forEach(st=>{
+    stripes.push([st.x,0.09,st.y+9,0.4,0.02,18]);if(st.i===p.n-1)stripes.push([st.x+9,0.09,st.y+9,0.4,0.02,18]);
+    if(st.ada)ada.push([st.x+4.5,0.08,st.y+9,8.6,0.02,17.6]);
+    if(seeded(++ci)<0.62&&!st.ada){const cx=st.x+4.5,cz=st.y+(p.dir==='down'?1.5:2)+7.25,col=pal[Math.floor(seeded(ci+77)*pal.length)];
+      bodies.push([cx,2.1,cz,5.8,2.6,14.5,0,col]);cabs.push([cx,4.3,cz+(p.dir==='down'?0.8:-0.8),5.2,1.9,7.2,0,col]);}}));
+  instBoxes(g,stripes,mat('stripe',0xf4f2ea),false);instBoxes(g,ada,mat('ada',0x3f78c2),false);
+  const carM=new THREE.MeshStandardMaterial({roughness:0.35,metalness:0.4});instBoxes(g,bodies,carM);instBoxes(g,cabs,new THREE.MeshStandardMaterial({roughness:0.2,metalness:0.5,color:0xffffff}));
+  // gardens
+  (S.gardens||[]).forEach(([x,y,w,h])=>{addBox(g,x+w/2,0.75,y+h/2,w,1.5,h,mat('wood',0x8a6a48));flat(g,x+0.3,y+0.3,w-0.6,h-0.6,1.52,mat('greens2',0x5e9e46));});
+  // solar field
+  if(S.solar){const o=S.solar,panels=[],legs=[];for(let r=0;r<o.rows;r++)for(let x=o.x;x+20<=o.x+o.w+0.01;x+=20){const z=o.y+r*o.pitch+o.depth/2;
+      panels.push([x+10,4.2,z,19.4,0.25,o.depth,0.42]);legs.push([x+4,2,z,0.3,4,0.3]);legs.push([x+16,2,z,0.3,4,0.3]);}
+    instBoxes(g,panels,mat('pv',0x1f3552,{roughness:0.35,metalness:0.35}));instBoxes(g,legs,mat('leg',0x8d969a));}
+  if(S.fence){const fm=mat('fence',0xaab2b5,{transparent:true,opacity:0.35,side:THREE.DoubleSide}),rails=[];
+    for(let i=0;i<S.fence.length-1;i++){const [x1,z1]=S.fence[i],[x2,z2]=S.fence[i+1],len=Math.hypot(x2-x1,z2-z1),cx=(x1+x2)/2,cz=(z1+z2)/2,horiz=Math.abs(z1-z2)<1e-6;
+      const pl=new THREE.Mesh(new THREE.PlaneGeometry(len,6),fm);pl.position.set(cx,3,cz);if(!horiz)pl.rotation.y=Math.PI/2;g.add(pl);
+      rails.push(horiz?[cx,6,cz,len,0.25,0.25]:[cx,6,cz,0.25,0.25,len]);
+      const n=Math.floor(len/10);for(let k=0;k<=n;k++){const f=k/n;rails.push([x1+(x2-x1)*f,3,z1+(z2-z1)*f,0.3,6,0.3]);}}
+    instBoxes(g,rails,mat('rail',0x7d868a));}
+  // cisterns
+  (S.cisterns||[]).forEach(([x,z,r,ht])=>{const m=mat('cistern',0x2f4f63,{roughness:0.5});const c=new THREE.Mesh(new THREE.CylinderGeometry(r,r,ht,32),m);c.position.set(x,ht/2,z);c.castShadow=true;g.add(c);
+    const d=new THREE.Mesh(new THREE.SphereGeometry(r,24,8,0,Math.PI*2,0,Math.PI/2),m);d.scale.y=0.3;d.position.set(x,ht,z);d.castShadow=true;g.add(d);});
+  // pads
+  (S.pads||[]).forEach(p=>{
+    if(p.c==='canopy'){addBox(g,p.x+p.w/2,12,p.y+p.h/2,p.w,0.8,p.h,mat('canopy',BOXC.canopy));[[p.x+1,p.y+p.h-1],[p.x+p.w-1,p.y+p.h-1]].forEach(([x,z])=>addBox(g,x,6,z,0.6,12,0.6,mat('canopy',BOXC.canopy)));return;}
+    if(p.c==='sign'){const mats=[mat('bx-sign',BOXC.sign),mat('bx-sign',BOXC.sign),mat('bx-sign',BOXC.sign),mat('bx-sign',BOXC.sign),new THREE.MeshStandardMaterial({map:brandTex(t.name.toUpperCase()+' · ROOT SYSTEM')}),mat('bx-sign',BOXC.sign)];
+      const o=new THREE.Mesh(UNIT,mats);o.scale.set(p.w,p.ht,p.h);o.position.set(p.x+p.w/2,p.ht/2,p.y+p.h/2);o.castShadow=true;g.add(o);return;}
+    addBox(g,p.x+p.w/2,p.ht/2,p.y+p.h/2,p.w,p.ht,p.h,mat('bx-'+p.c,BOXC[p.c]||0x9aa0a3));});
+  // trucks
+  if(S.trucks){const side=new THREE.MeshStandardMaterial({map:brandTex('FRESH FROM THE ROOT SYSTEM')}),wht=mat('trailer',0xf0f0ec);
+    S.trucks.forEach(tr=>{const o=new THREE.Mesh(UNIT,[wht,wht,wht,wht,side,side]);o.scale.set(53,12,8.5);o.position.set(t.W+2+26.5,4+6,tr.y);o.castShadow=true;g.add(o);
+      addBox(g,t.W+61,6,tr.y,10,9,8,mat('cab',0x1f4d3a));addBox(g,t.W+61,8,tr.y,10.2,2.4,7.4,mat('wind',0x2b3a44,{roughness:0.1}));
+      [[t.W+8,0],[t.W+12,0],[t.W+46,0],[t.W+50,0],[t.W+59,0],[t.W+64,0]].forEach(([x])=>addBox(g,x,1.6,tr.y,3.2,3.2,8.6,mat('tire',0x1d1f21)));});}
+  // trees (instanced, low-poly)
+  const trees=(S.trees||[]).filter(t=>t[2]);
+  if(trees.length){const trunk=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.45,0.7,1,8),mat('trunk',0x6b5136),trees.length),
+      crown=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshStandardMaterial({roughness:0.9,flatShading:true}),trees.length),o=new THREE.Object3D();
+    trees.forEach(([x,z,r],i)=>{const h=r*1.1;o.position.set(x,h/2,z);o.rotation.set(0,0,0);o.scale.set(r/4,h,r/4);o.updateMatrix();trunk.setMatrixAt(i,o.matrix);
+      o.position.set(x,h+r*0.75,z);o.rotation.set(0,seeded(i)*3,0);o.scale.set(r,r*1.15,r);o.updateMatrix();crown.setMatrixAt(i,o.matrix);
+      const c=new THREE.Color(0x4f7d3f);c.offsetHSL((seeded(i+9)-0.5)*0.05,0,(seeded(i+3)-0.5)*0.12);crown.setColorAt(i,c);});
+    trunk.castShadow=crown.castShadow=true;g.add(trunk);g.add(crown);}
+}
+
+/* ---------- labels ---------- */
+function buildLabels(t,g){
+  const lh=Math.max(t.W,t.H)/16,grp=new THREE.Group();grp.name='roomLabels';
+  t.rooms.forEach(r=>{const [x0,y0,x1,y1]=r.r;const sp=labelSprite(r.n,`${fmt(r.area)} SF`,(y1-y0)<lh*1.6?lh*0.7:lh);sp.position.set((x0+x1)/2,0,(y0+y1)/2);grp.add(sp);});
+  g.add(grp);
+  const sgrp=new THREE.Group();sgrp.name='siteLabels';
+  (t.site.labels||[]).forEach(([x,z,l])=>{const sp=labelSprite(l,null,lh*0.75);sp.position.set(x,lh*0.9,z);sgrp.add(sp);});
+  g.add(sgrp);
+}
+
+/* ---------- scene, camera, modes ---------- */
+function init3D(){
+  const holder=document.getElementById('scene');
+  if(!window.THREE||!THREE.OrbitControls){document.getElementById('scene-msg').textContent='3D viewer could not load in this browser.';return;}
+  const w=holder.clientWidth,h=holder.clientHeight;
+  M3.scene=new THREE.Scene();M3.scene.background=new THREE.Color(0xdbe5ec);
+  M3.camera=new THREE.PerspectiveCamera(38,w/h,1,20000);
+  M3.renderer=new THREE.WebGLRenderer({antialias:true});M3.renderer.setPixelRatio(Math.min(devicePixelRatio,2));M3.renderer.setSize(w,h);
+  M3.renderer.shadowMap.enabled=true;M3.renderer.shadowMap.type=THREE.PCFSoftShadowMap;M3.renderer.localClippingEnabled=true;
+  holder.insertBefore(M3.renderer.domElement,holder.firstChild);document.getElementById('scene-msg').remove();
+  M3.controls=new THREE.OrbitControls(M3.camera,M3.renderer.domElement);M3.controls.enableDamping=true;M3.controls.dampingFactor=0.08;M3.controls.maxPolarAngle=Math.PI*0.48;M3.controls.screenSpacePanning=true;
+  M3.scene.add(new THREE.HemisphereLight(0xe3edf5,0x60704f,0.58));
+  M3.sun=new THREE.DirectionalLight(0xfff1d8,0.82);M3.sun.castShadow=true;M3.sun.shadow.mapSize.set(4096,4096);M3.sun.shadow.bias=-0.0004;M3.sun.shadow.normalBias=0.6;
+  M3.scene.add(M3.sun);M3.scene.add(M3.sun.target);
+  new ResizeObserver(()=>{const W=holder.clientWidth,Hh=holder.clientHeight;if(!W||!Hh)return;M3.renderer.setSize(W,Hh);M3.camera.aspect=W/Hh;M3.camera.updateProjectionMatrix();}).observe(holder);
+  M3.ready=true;
+  (function loop(){requestAnimationFrame(loop);if(!M3.active)return;M3.controls.update();M3.renderer.render(M3.scene,M3.camera);})();
+}
+function show3D(key){
+  if(!M3.ready)return;const t=TIERS[key];
+  if(!M3.groups[key]){const g=new THREE.Group();buildSite(t,g);buildBuilding(t,g);buildEquipment(t,g);buildLabels(t,g);M3.groups[key]=g;M3.scene.add(g);}
+  Object.entries(M3.groups).forEach(([k,g])=>g.visible=(k===key));M3.cur=key;
+  const b=t.site.bounds,D=Math.max(b[2]-b[0],b[3]-b[1]),cx=t.W/2,cz=t.H/2;
+  M3.sun.position.set(cx-D*0.45,D*0.85,cz+D*0.55);M3.sun.target.position.set(cx,0,cz);
+  const sc=M3.sun.shadow.camera;sc.left=-D*0.75;sc.right=D*0.75;sc.top=D*0.75;sc.bottom=-D*0.75;sc.near=1;sc.far=D*3;sc.updateProjectionMatrix();
+  M3.camera.far=D*12;M3.camera.updateProjectionMatrix();M3.controls.maxDistance=D*2.5;M3.controls.minDistance=8;
+  setMode(M3.mode);setCam('aerial');
+}
+function setMode(mode){
+  M3.mode=mode;if(!M3.cur)return;const t=TIERS[M3.cur],g=M3.groups[M3.cur];
+  g.getObjectByName('roof').visible=(mode==='exterior');
+  clipPlane.constant=mode==='plancut'?FY+5:1e5;
+  const lh=Math.max(t.W,t.H)/16,rl=g.getObjectByName('roomLabels');
+  rl.visible=M3.labels&&mode!=='exterior';rl.children.forEach(s=>s.position.y=mode==='plancut'?FY+9+lh*0.5:FY+t.wallH+lh*0.8);
+  g.getObjectByName('siteLabels').visible=M3.labels;
+}
+function setCam(kind){
+  if(!M3.cur)return;const t=TIERS[M3.cur],b=t.site.bounds,D=Math.max(b[2]-b[0],b[3]-b[1]),cx=t.W/2,cz=t.H/2,c=M3.controls;
+  if(kind==='aerial'){const sx=(b[0]+b[2])/2,sz=(b[1]+b[3])/2;c.target.set((sx+cx)/2,0,(sz+cz)/2);M3.camera.position.set((sx+cx)/2+D*0.5,D*0.62,(sz+cz)/2+D*0.85);}
+  if(kind==='front'){c.target.set(cx,t.wallH*0.45,cz);M3.camera.position.set(cx-t.W*0.35,Math.max(9,t.wallH*0.9),b[3]-6);}
+  if(kind==='top'){c.target.set((b[0]+b[2])/2,0,(b[1]+b[3])/2);M3.camera.position.set((b[0]+b[2])/2,D*1.15,(b[1]+b[3])/2+0.1);}
+  c.update();
+}
+
+/* ================= UI ================= */
+const APP={tier:'small',panel:'model',layers:{equip:true,dims:true,grid:true,power:false}};
+const KIND_VAR=k=>`var(--rm-${k})`;
+function specCells(el,rows){el.innerHTML=rows.map(([k,v])=>`<div class="cell"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`).join('');}
+function tierSpecs(t){return [['Building',`${fmt(t.area)} SF`],['Footprint',`${t.W}' × ${t.H}'`],['Clear height',`${t.wallH}'`],['Site',`${t.siteAcres.toFixed(2)} acres`],
+  ['Fish system',t.fish],['Parking',`${t.stalls} stalls`],['Staffing',t.staff],['Est. cost',t.cost]];}
+
+function renderModelPanel(t){
+  document.getElementById('m-title').textContent=`${t.name} · 3D Model`;
+  document.getElementById('m-sub').textContent=`${t.size} tier · ${fmt(t.area)} SF`;
+  specCells(document.getElementById('m-specs'),tierSpecs(t));
+}
+function renderFloor(t){
+  document.getElementById('f-title').textContent=`${t.name} · Floor Plan`;
+  const {inner,vb}=floorPlanSVG(t,APP.layers);mountSVG(document.getElementById('floor-viewer'),inner,vb);
+  const kinds=[...new Set(t.rooms.map(r=>r.k))];
+  let lg=kinds.map(k=>`<span><i style="background:${KIND_VAR(k)}"></i>${esc(KIND_LABEL[k])}</span>`).join('');
+  lg+=`<span><i style="background:var(--bp-wall)"></i>Wall</span><span><i style="background:var(--water)"></i>Fish tank</span><span><i style="background:var(--green)"></i>Grow bed</span>`;
+  if(APP.layers.power)lg+=powerRuns(t).map(p=>`<span><i class="ln" style="background:${p.color}"></i>${esc(p.id)} ${esc(p.n)}</span>`).join('');
+  document.getElementById('f-legend').innerHTML=lg;
+}
+function renderSite(t){
+  document.getElementById('s-title').textContent=`${t.name} · Site Plan`;
+  const {inner,vb}=sitePlanSVG(t);mountSVG(document.getElementById('site-viewer'),inner,vb);
+  document.getElementById('s-legend').innerHTML=[['var(--site-grass)','Landscape'],['var(--site-asph)','Asphalt drive & parking'],['var(--site-conc)','Concrete walks & pads'],
+    ['var(--solar)','Solar arrays'],['var(--tree)','Trees'],['var(--water)','Rain cisterns'],['#5b8fd0','Accessible stalls']]
+    .map(([c,l])=>`<span><i style="background:${c}"></i>${l}</span>`).join('')+`<span><i style="background:var(--accent)"></i>Entry door</span><span><i style="background:#c0702b"></i>Overhead door</span>`;
+}
+function renderElec(t){
+  document.getElementById('e-title').textContent=`${t.name} · Single-Line Diagram`;
+  document.getElementById('e-service').textContent=t.service;
+  const {inner,vb}=sldSVG(t);mountSVG(document.getElementById('sld-viewer'),inner,vb);
+  const runs=powerRuns(t);
+  document.getElementById('e-table').innerHTML=`<thead><tr><th>Panel</th><th>Serves</th><th>Feeder</th><th>Loads</th></tr></thead><tbody>${
+    runs.map(p=>`<tr><td><span class="swatch" style="background:${p.color}"></span><b>${esc(p.id)}</b></td><td>${esc(p.n)}</td><td class="mono">${esc(p.rate)}</td><td class="mono">${p.loads.length}</td></tr>`).join('')}</tbody>`;
+}
+function renderOverview(t){
+  document.getElementById('o-title').textContent=`${t.name} · ${t.size} tier`;
+  document.getElementById('o-sub').textContent=t.tag;
+  specCells(document.getElementById('o-specs'),[...tierSpecs(t),['Electrical service',t.service],['Solar',t.sld.solar],['Backup power',t.sld.gen||'Battery UPS on controls'],['Loading',t.site.trucks?`${t.site.trucks.length} truck docks`:'Roll-up service door']]);
+  const tot=t.rooms.reduce((s,r)=>s+r.area,0);
+  document.getElementById('o-table').innerHTML=`<thead><tr><th>Room</th><th>Use</th><th>Area</th><th>Share</th></tr></thead><tbody>${
+    t.rooms.map(r=>`<tr><td><span class="swatch" style="background:${KIND_VAR(r.k)};border:1px solid var(--line)"></span>${esc(r.n)}</td><td>${esc(KIND_LABEL[r.k])}</td><td class="mono">${fmt(r.area)} SF</td><td class="mono">${Math.round(r.area/tot*100)}%</td></tr>`).join('')}
+    <tr><td><b>Total</b></td><td></td><td class="mono"><b>${fmt(tot)} SF</b></td><td class="mono">100%</td></tr></tbody>`;
+}
+function renderPanel(){
+  const t=TIERS[APP.tier];
+  M3.active=APP.panel==='model';
+  if(APP.panel==='model'){renderModelPanel(t);if(M3.ready&&M3.cur!==APP.tier)show3D(APP.tier);}
+  if(APP.panel==='floor')renderFloor(t);
+  if(APP.panel==='site')renderSite(t);
+  if(APP.panel==='elec')renderElec(t);
+  if(APP.panel==='overview')renderOverview(t);
+}
+
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+b.dataset.panel));
+  APP.panel=b.dataset.panel;renderPanel();}));
+document.querySelectorAll('.tierbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tierbtn').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  APP.tier=b.dataset.tier;renderPanel();}));
+document.querySelectorAll('[data-layer]').forEach(b=>b.addEventListener('click',()=>{
+  const k=b.dataset.layer;APP.layers[k]=!APP.layers[k];b.setAttribute('aria-pressed',String(APP.layers[k]));renderFloor(TIERS[APP.tier]);}));
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));setMode(b.dataset.mode);}));
+document.querySelectorAll('[data-cam]').forEach(b=>b.addEventListener('click',()=>setCam(b.dataset.cam)));
+document.getElementById('t-labels').addEventListener('click',e=>{M3.labels=!M3.labels;e.currentTarget.setAttribute('aria-pressed',String(M3.labels));setMode(M3.mode);});
+
+try{init3D();}catch(err){const m=document.getElementById('scene-msg');if(m)m.textContent='3D viewer could not start: '+err.message;}
+renderPanel();
+
+</script>
+
+</body></html>
